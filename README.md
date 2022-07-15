@@ -20,7 +20,7 @@ function myFunction() {
 ```
 1KOP3QLbYHcT9Kh9Iyronqt-FYIdg8XZwJ4aAMdASFC3CNjkkKVPc0z9V
 ```
-バージョンは10でOK
+バージョンは11でOK
 
 4.サービスを追加、Google Calrender APIを選択
 
