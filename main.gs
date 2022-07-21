@@ -1,4 +1,6 @@
+//※スクリプト名の変更厳禁
 const DEBUG = false;
+const VERSION = 1;
 
 function main (username, password, calenderId) {
   if (DEBUG) {console.log(username + "\n" + password + "\n" + calenderId + "\n");}
