@@ -10,8 +10,8 @@ function myFunction() {
   const userProperties = PropertiesService.getScriptProperties();
   const username = userProperties.getProperty('A');
   const password = userProperties.getProperty('B');
-  const calenderId = userProperties.getProperty('C');
-  MoodleCalendar2.main(username, password, calenderId);
+  const calendarId = userProperties.getProperty('C');
+  MoodleCalendar2.main(username, password, calendarId);
 }
 ```
 
