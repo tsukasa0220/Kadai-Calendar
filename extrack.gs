@@ -1,5 +1,13 @@
 // 1Mc8BthYthXx6CoIz90-JiSzSafVnT6U3t0z_W3hLTAX5ek4w0G_EIrNw
 function extrack(event) {
+  //アップデート確認
+  const versionUpdate = SpreadsheetApp.openById("1UcRDr9Nt9B6XY7MEydLLrCiyEagPrIK5_vG1YamuNwg").getRange("A" + (VERSION + 1)).getValue();
+  let preaseUpdate = "";
+  if (versionUpdate) {
+    preaseUpdate = "\n" + 
+                   '★<a href="https://github.com/tsukasa0220/MoodleCalender">最新のバージョンがあります!!</a>\n';
+  }
+
   const eventArr = parse1(event, 'data-type="event"', 'class="card-link"');
 
   const id = parse1(event, 'data-event-id="', '"');
@@ -54,7 +62,7 @@ function extrack(event) {
     subject[i] = '<a href="https://kadai-moodle.kagawa-u.ac.jp/course/view.php?id=' + subject[i] + '</a>';
 
     //本文を１つに統合
-    content[i] = conbibe(title[i], url[i], subject[i], description[i], due[i], lors[i]);
+    content[i] = conbibe(title[i], url[i], subject[i], description[i], due[i], lors[i], preaseUpdate);
   }
   return [id, subjectTitle, content, due, color];
 }
@@ -84,21 +92,20 @@ function timeChange(dateObj){
   return text;
 }
 
-function conbibe(title, url, subject, description, due, lors) {
-  return "==============\n" + 
-         "Moodleカレンダー\n" + 
-         "==============\n" + 
+function conbibe(title, url, subject, description, due, lors, update) {
+  return "====================\n" + 
+         "Moodleカレンダー ver. " + VERSION + "\n" + 
+         "====================\n" + 
+         update + 
          "\n" + 
          "★" + url + "\n" + 
          "\n" + 
          "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + 
-         "\n" + 
-         "■時間割名：" + subject + "\n" + 
-         "\n" + 
+         "\n" +  
          "■" + lors + "：" + timeChange(new Date(due * 1000)).slice(5) + "\n" + 
          "\n" + 
-         "■更新日時：" + timeChange(new Date())　+ "\n" + 
-         "\n" + 
+         "■時間割名：" + subject + "\n" + 
+         "\n" +
          "■概要" + "\n" +
          "\n" +  
          title + "\n" +
@@ -107,8 +114,10 @@ function conbibe(title, url, subject, description, due, lors) {
          "\n" + 
          description + "\n" + 
          "\n" + 
+         "■更新日時：" + timeChange(new Date())　+ "\n" + 
+         "\n" + 
          "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + 
          "\n" + 
-         "万一、このシステムによる利用者の不手際が発生しても、一切保証を負えませんのでご了承ください。\n" + 
+         "万一、このシステムによって利用者の不手際が発生しても一切保証を負えませんのでご了承ください。\n" + 
          '詳細については<a href="https://github.com/tsukasa0220/MoodleCalender">こちら</a>から'
 }
