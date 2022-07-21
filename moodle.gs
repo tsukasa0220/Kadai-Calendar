@@ -1,7 +1,7 @@
 // 13KJxU8q0ZYmZXyQswU2HrkQX-yXlgnlJ3BVzsKrS69oaE4FcViPRFPZb
 const cheerio = libpack.cheerio();
 
-//Cookieのユーティリティクラス
+//Cookieのユーティリティクラス 
 class CookieUtil {
   /**
    * 値を抽出
