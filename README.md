@@ -17,7 +17,7 @@ function myFunction() {
 
 3.ライブラリを追加、以下のスクリプトIDを入力
 ```
-1KOP3QLbYHcT9Kh9Iyronqt-FYIdg8XZwJ4aAMdASFC3CNjkkKVPc0z9V
+1Az_5AZ-sRCEODFnwcX15iLZGQDumPuPnWUkAhM6M-iJ-O8lcGtR6OmIc
 ```
 
 4.プロジェクトの設定（歯車マーク）→ スクリプトプロパティを編集
