@@ -1,5 +1,6 @@
 # MoodleCalendar
-GASを使ってGoogleカレンダーにMoodleの課題提出や出席登録の予定を追加
+GASを使ってGoogleカレンダーにMoodleの課題提出や出席登録の予定を追加<br>
+Moodleの情報はカレンダーの直近イベントから取得しています
 
 1.Google Driveから <br>
 　新規 → その他 → Google App Script
