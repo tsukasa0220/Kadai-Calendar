@@ -9,9 +9,9 @@ Moodleの情報はカレンダーの直近イベントから取得していま�
 ```
 function myFunction() {
   const userProperties = PropertiesService.getScriptProperties();
-  const username = userProperties.getProperty('A');
-  const password = userProperties.getProperty('B');
-  const calendarId = userProperties.getProperty('C');
+  const username = userProperties.getProperty('学籍番号');
+  const password = userProperties.getProperty('パスワード');
+  const calendarId = userProperties.getProperty('メールアドレス');
   MoodleCalendar2.main(username, password, calendarId);
 }
 ```
@@ -24,9 +24,9 @@ function myFunction() {
 4.プロジェクトの設定（歯車マーク）→ スクリプトプロパティを編集
 
 以下を入力<br>
-プロパティ：A　　値：<学籍番号を入力(s20t000)><br>
-プロパティ：B　　値：<パスワードを入力(学籍番号のパスワード)><br>
-プロパティ：C　　値：< Googleアカウント(XXXXX@gmail.com)を入力 > （別に用意したカレンダーIDでもOK）<br>
+プロパティ：学籍番号　　　　　値：<学籍番号を入力(s20t000)><br>
+プロパティ：パスワード　　　　値：<パスワードを入力(学籍番号のパスワード)><br>
+プロパティ：メールアドレス　　値：< Googleアカウント(XXXXX@gmail.com)を入力 > （別に用意したカレンダーIDでもOK）<br>
 追加したらスクリプトプロパティを保存
 
 5.エディタ（<>のマーク）に戻り実行を選択
