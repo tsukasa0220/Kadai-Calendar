@@ -19,12 +19,12 @@ function myFunction() {
   MoodleCalendar2.main(username, password, calendarId);
 }
 ```
-<br>
+
 3.ライブラリを追加、以下のスクリプトIDを入力
 ```
 1Az_5AZ-sRCEODFnwcX15iLZGQDumPuPnWUkAhM6M-iJ-O8lcGtR6OmIc
 ```
-<br>
+
 4.プロジェクトの設定（歯車マーク）→ スクリプトプロパティを編集 <br>
 以下を入力してください <br>
 <table border="1">
@@ -62,8 +62,8 @@ function myFunction() {
 以下を設定してください <br>
 <table border="1">
 　<tr>
-　　<th>実行する関数を選択</th>
-　　<th>myFunction</th>
+　　<td>実行する関数を選択</td>
+　　<td>myFunction</td>
 　</tr>
 　<tr>
 　　<td>実行するデプロイを選択</td>
