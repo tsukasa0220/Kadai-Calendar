@@ -10,7 +10,7 @@ GASを使ってGoogleカレンダーにMoodleの課題提出や出席登録の�
 　新規 → その他 → Google App Script <br>
 <br>
 
-2.以下のコードを貼り付け（もともとあるコードは消してください）
+2.以下のコードを貼り付け（もともとあるコードは消してください。）
 ```
 function myFunction() {
   const userProperties = PropertiesService.getScriptProperties();
@@ -22,13 +22,13 @@ function myFunction() {
 ```
 <br>
 
-3.ライブラリを追加、以下のスクリプトIDを入力
+3.ライブラリを追加、以下のスクリプトIDを入力して保存
 ```
 1Az_5AZ-sRCEODFnwcX15iLZGQDumPuPnWUkAhM6M-iJ-O8lcGtR6OmIc
 ```
 <br>
 4.プロジェクトの設定（歯車マーク）→ スクリプトプロパティを編集 <br>
-以下を入力してください <br>
+以下を入力 
 <table border="1">
 　<tr>
 　　<th>プロパティ</th>
@@ -47,7 +47,7 @@ function myFunction() {
 　　<td>＜Googleアカウント（XXXX@gmail.com）＞</td>
 　</tr>
 </table>
-（補足：メールアドレスの値はカレンダーIDでもOKです） <br>
+（補足：メールアドレスの値はカレンダーIDでもOKです。） <br>
 追加したらスクリプトプロパティを保存 <br>
 <br>
 5.エディタ（<>のマーク）に戻り"実行"を選択 <br>
@@ -57,9 +57,8 @@ function myFunction() {
 「このアプリは Google で確認されていません」と出ますが、詳細 → 安全ではないページに移動 → 許可 <br>
 そのまま実行が完了します。（ログに"取得失敗"と出た場合はプロパティと値が間違っていないか確認してください。） <br>
 <br>
-7.最後にトリガー（時計のマーク） → トリガーを追加 <br>
-<br>
-以下を設定してください <br>
+7.トリガー（時計のマーク） → トリガーを追加 <br>
+以下を設定 
 <table border="1">
 　<tr>
 　　<td>実行する関数を選択</td>
@@ -92,11 +91,11 @@ iOS、AndroidともにGoogleカレンダーをインストールしてもらえ�
 <h2>アップデート方法</h2>
 最新バージョンが公開されると、カレンダー上部に「最新のバージョンがあります！！」と表示されます。以下の手順でバージョンアップをお願いします。 <br>
 <br>
-1.<a href="https://drive.google.com/drive/my-drive">Google Drive</a>から自分のスクリプトを選択（名前を変更していなければ「無題のプロジェクト」です） <br>
+1.<a href="https://drive.google.com/drive/my-drive">Google Drive</a>から自分のスクリプトを選択（名前を変更していなければ「無題のプロジェクト」です。） <br>
 <br>
-2.ライブラリのMoodleCalendar2を選択 <br>
+2.ライブラリのMoodleCalendar2をクリック（点３つのところではなく、そのままクリックしてください。） <br>
 <br>
-3.バージョンをクリックし、最新のバージョンにする <br>
+3.バージョンをクリックし、最新のバージョンにする。 <br>
 <h3>バージョン2.2</h3>
 moodle.gsのユーザーエージェントを更新しました。 <br>
 バージョン表記をver. からVerに変更 <br>
