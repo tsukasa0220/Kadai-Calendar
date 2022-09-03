@@ -1,107 +1,92 @@
-// 13KJxU8q0ZYmZXyQswU2HrkQX-yXlgnlJ3BVzsKrS69oaE4FcViPRFPZb
-// HTMLから指定されたnameのタグの値を抽出
-const cheerio = libpack.cheerio();
+// Cheerio: 1ReeQ6WO8kKNxoaA_O0XEQ589cIrRvEBA9qcWpNqdOP17i47u6N9M5Xh0
 
+// ブラウザにからアクセスしているかのように偽装（マクロ対策）
 const user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36 Edg/103.0.1264.71';
 
-//Cookieのユーティリティクラス
+// Cookieのユーティリティクラス
 class CookieUtil {
-  /**
-   * 値を抽出
-   * @param {string} cookie Cookieデータ（"name=value;...")
-   * @return {string} value
-   */
+  // @param {string} cookie Cookieデータ（"name=value;...")
+  // name == key なら return name=value;
   static getValue(cookies, key) {
     const cookiesArray = cookies.split(';');
-
     for(const c of cookiesArray){
       const cArray = c.split('=');
       if(cArray[0] == key){
-        return cArray[1]
+        return cArray[0] + '=' + cArray[1] + ';';
       }
     }
-    return false
+    return false;
   }
 }
 
 // moodleへのログイン処理
 function login(id, pass) {
+  let response, cookies, data, $, headers, payload, options, moodleSession;
 
-  let response, cookies, data, $, headers, payload, options;
-
-  // ログインページを開く(GET)<200>
+  // ログインページを開く(GET) <200>
   response = UrlFetchApp.fetch('https://kadai-moodle.kagawa-u.ac.jp/login/index.php');
+
+  // ヘッダーから必要なcookieを取り出す
   cookies = response.getHeaders()["Set-Cookie"];
-  let cookieMoodleSession = CookieUtil.getValue(cookies, 'MoodleSession');
+  moodleSession = CookieUtil.getValue(cookies, 'MoodleSession');
+  if (moodleSession == false) {
+    Logger.log("失敗[001]"); 
+    return false;
+  }
+
+  // ページのソースからlogintokenを抽出(logintokenはマクロ対策を通過するために必要)
   data = response.getContentText("UTF-8");
+  $ = Cheerio.load(data);
+  const logintoken = $('[name="logintoken"]').val();
 
-  $ = cheerio.load(data);
-  const token = $('[name="logintoken"]').val();
+  Utilities.sleep(500);
 
-  Utilities.sleep(300);
-
-  // ログインフォーム送信(POST)<303>
+  // ログインフォーム送信(POST) <303>
   headers = {
-    'cookie': 'MoodleSession=' + cookieMoodleSession + ';',
-    'user-agent': user_agent,
+    'cookie': moodleSession,
+    'user-agent': user_agent
   }
   payload = {
-    'logintoken': token,
+    'logintoken': logintoken,
     'username': id,
-    'password': pass,
+    'password': pass
   }
   options = {
     'method': 'post',
     'headers': headers,
     'payload': payload,
-    'followRedirects': false,
+    'followRedirects': false
   }
   response = UrlFetchApp.fetch('https://kadai-moodle.kagawa-u.ac.jp/login/index.php', options);
 
   // MoodleSessionを取得し次のリクエストにセット
-
+  // Set-cookieが複数あるため，キーが”MoodleSession”の値を取り出す
   cookies = response.getAllHeaders()["Set-Cookie"];
   for (const c in cookies) {
     const cookie = cookies[c]
-
     if (CookieUtil.getValue(cookie, 'MoodleSession')) {
-      cookieMoodleSession = CookieUtil.getValue(cookie, 'MoodleSession')
+      moodleSession = CookieUtil.getValue(cookie, 'MoodleSession')
     }
   }
- 
-  Utilities.sleep(300);
+  if (moodleSession == false) {
+    Logger.log("失敗[002]"); 
+    return false;
+  }
 
-  // リダイレクト処理(GET)<303>
+  Utilities.sleep(500);
+
+  // 直近イベントのカレンダーのページ(GET) <200>
   headers = {
-    'cookie': 'MoodleSession=' + cookieMoodleSession + ';',
+    'cookie': moodleSession,
     'user-agent': user_agent,
   }
   options = {
     'method': 'get',
     'headers': headers,
-    'followRedirects': false,
-  }
-  response = UrlFetchApp.fetch('https://kadai-moodle.kagawa-u.ac.jp/login/index.php?testsession=', options)
-
-  cookies = response.getHeaders()["Set-Cookie"];
-
-  Utilities.sleep(300);
-
-  // カレンダーのページ(GET) <200>
-  headers = {
-    'cookie': 'MoodleSession=' + cookieMoodleSession + ';',
-    'user-agent': user_agent,
-  }
-  options = {
-    'method': 'get',
-    'headers': headers,
-    'followRedirects': false,
-    'muteHttpExceptions': false,
   }
   response = UrlFetchApp.fetch('https://kadai-moodle.kagawa-u.ac.jp/calendar/view.php?view=upcoming&course=1', options);
+
   data = response.getContentText();
-  
-  $ = cheerio.load(data);
-  
+
   return data;
 }
