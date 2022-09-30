@@ -1,11 +1,12 @@
-// 1Mc8BthYthXx6CoIz90-JiSzSafVnT6U3t0z_W3hLTAX5ek4w0G_EIrNw
+// Parser: 1Mc8BthYthXx6CoIz90-JiSzSafVnT6U3t0z_W3hLTAX5ek4w0G_EIrNw
+
 function extrack(event) {
-  //アップデート確認
+  // アップデート確認
   const versionUpdate = SpreadsheetApp.openById("1UcRDr9Nt9B6XY7MEydLLrCiyEagPrIK5_vG1YamuNwg").getRange("A" + (VERSION + 1)).getValue();
   let preaseUpdate = "";
   if (versionUpdate) {
     preaseUpdate = "\n" + 
-                   '★<a href="https://github.com/tsukasa0220/MoodleCalender">最新のバージョンがあります!!</a>\n';
+                   '★<a href="https://github.com/tsukasa0220/MoodleCalendar">最新のバージョンがあります!!</a>\n';
   }
 
   const eventArr = parse1(event, 'data-type="event"', 'class="card-link"');
@@ -28,54 +29,56 @@ function extrack(event) {
   const content = [""];
   const color = [];
   const subjectTitle = [""];
+
   for (let i = 0; i < id.length; i++) {
-    //取得したurlを利用して、includesで分類（提出、出席、小テスト等）とurlを作成
+    // 取得したurlを利用して、includesで分類（提出、出席、小テスト等）とurlを作成
     lors[i] = '期限';
-    if (url[i].includes("assign")) { 　　　　　　　　　　　　　　　　　　　　　　　//課題
+
+    if (url[i].includes("assign")) { 　　　　　　　　　　　　　　　　　　　　　　　// 課題
       color[i] = 11;
       url[i] = url[i] + '" class="card-link">提出物をアップロードする</a>';
       subjectTitle[i] = "課題：" + subject[i].slice(6);
-    } else if (url[i].includes("attendance")) { 　　　　　　　　　　　　　　　　//出席
+      
+    } else if (url[i].includes("attendance")) { 　　　　　　　　　　　　　　　　// 出席
       color[i] = 2;
       url[i] = url[i] + '" class="card-link">出席登録を行う</a>';
       subjectTitle[i] = "出席：" + subject[i].slice(6);
-      if (subject[i].includes(description[i])) {
-        title[i] = description[i];
-      } else {
-        title[i] = subject[i].slice(6);
-      }
-    } else if (url[i].includes("quiz")) { 　　　　　　　　　　　　　　　　　　　　//小テスト
+
+    } else if (url[i].includes("quiz")) { 　　　　　　　　　　　　　　　　　　　　// 小テスト
       color[i] = 5;
       url[i] = url[i] + '" class="card-link">小テストを受験する</a>';
       subjectTitle[i] = "小テスト：" + subject[i].slice(6);
-      if (title[i].includes("開始")) {lors[i] = "開始"} 
-    } else if (url[i].includes("questionnaire")) { 　　　　　　　　　　　　　　　//アンケート
+      if (title[i].includes("開始")) {lors[i] = "開始";} 
+
+    } else if (url[i].includes("questionnaire")) { 　　　　　　　　　　　　　　　// アンケート
       color[i] = 8;
       url[i] = url[i] + '" class="card-link">アンケートに回答する</a>';
       subjectTitle[i] = "アンケート：" + subject[i].slice(6);
-    } else { 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　//その他（amsplayer,chatなど）
+
+    } else { 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　// その他（amsplayer,chatなど）
       color[i] = 7;
       url[i] = url[i] + '" class="card-link">活動に移動する</a>'
       subjectTitle[i] = "活動：" + subject[i].slice(6);
     }
-    //時間割名にURLを付与
+
+    // 時間割名にURLを付与
     subject[i] = '<a href="https://kadai-moodle.kagawa-u.ac.jp/course/view.php?id=' + subject[i] + '</a>';
 
-    //本文を１つに統合
+    // 本文を１つに統合
     content[i] = conbibe(title[i], url[i], subject[i], description[i], due[i], lors[i], preaseUpdate);
   }
   return [id, subjectTitle, content, due, color];
 }
 
-//文字列をパースする
+// 文字列をパースする
 function parse1(html, start, end) {
-  return Parser.data(html).from(start).to(end).iterate();
+  return Parser.data(html).from(start).to(end).iterate(); // 配列 
 }
 function parse2(html, start, end) {
-  return Parser.data(html).from(start).to(end).build();
+  return Parser.data(html).from(start).to(end).build(); // 最初のみ
 }
 
-//時間を{yyyy年mm月dd日(day of week)hh時mm分ss秒}に変換
+// UNIXを{yyyy年mm月dd日(day of week)hh時mm分ss秒}に変換
 function timeChange(dateObj){
   let text = '';
 
@@ -93,9 +96,9 @@ function timeChange(dateObj){
 }
 
 function conbibe(title, url, subject, description, due, lors, update) {
-  return "====================\n" + 
-         "Moodleカレンダー ver. " + VERSION + "\n" + 
-         "====================\n" + 
+  return "=====================\n" + 
+         "Moodleカレンダー Ver2." + VERSION + "\n" + 
+         "=====================\n" + 
          update + 
          "\n" + 
          "★" + url + "\n" + 
@@ -119,5 +122,5 @@ function conbibe(title, url, subject, description, due, lors, update) {
          "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + 
          "\n" + 
          "万一、このシステムによって利用者の不手際が発生しても一切保証を負えませんのでご了承ください。\n" + 
-         '詳細については<a href="https://github.com/tsukasa0220/MoodleCalender">こちら</a>から'
+         'GitHub:<a href="https://github.com/tsukasa0220/MoodleCalendar">MoodleCalendar</a>'
 }
