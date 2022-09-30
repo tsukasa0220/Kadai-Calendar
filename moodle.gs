@@ -1,8 +1,3 @@
-// Cheerio: 1ReeQ6WO8kKNxoaA_O0XEQ589cIrRvEBA9qcWpNqdOP17i47u6N9M5Xh0
-
-// ブラウザにからアクセスしているかのように偽装（マクロ対策）
-const user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36 Edg/103.0.1264.71';
-
 // Cookieのユーティリティクラス
 class CookieUtil {
   // @param {string} cookie Cookieデータ（"name=value;...")
@@ -19,6 +14,9 @@ class CookieUtil {
   }
 }
 
+// ブラウザにからアクセスしているかのように偽装（マクロ対策）
+const user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.53';
+
 // moodleへのログイン処理
 function login(id, pass) {
   let response, cookies, data, $, headers, payload, options, moodleSession;
@@ -34,7 +32,7 @@ function login(id, pass) {
     return false;
   }
 
-  // ページのソースからlogintokenを抽出(logintokenはマクロ対策を通過するために必要)
+  // ページのソースからlogintokenを抽出
   data = response.getContentText("UTF-8");
   $ = Cheerio.load(data);
   const logintoken = $('[name="logintoken"]').val();
