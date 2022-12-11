@@ -1,126 +1,132 @@
-// Parser: 1Mc8BthYthXx6CoIz90-JiSzSafVnT6U3t0z_W3hLTAX5ek4w0G_EIrNw
-
-function extrack(event) {
-  // アップデート確認
-  const versionUpdate = SpreadsheetApp.openById("1UcRDr9Nt9B6XY7MEydLLrCiyEagPrIK5_vG1YamuNwg").getRange("A" + (VERSION + 1)).getValue();
-  let preaseUpdate = "";
-  if (versionUpdate) {
-    preaseUpdate = "\n" + 
-                   '★<a href="https://github.com/tsukasa0220/MoodleCalendar">最新のバージョンがあります!!</a>\n';
-  }
-
-  const eventArr = parse1(event, 'data-type="event"', 'class="card-link"');
-
-  const id = parse1(event, 'data-event-id="', '"');
-  let title = parse1(event, '<h3 class="name d-inline-block">', '</h3>');
-  const due = parse1(event, '<a href="https://kadai-moodle.kagawa-u.ac.jp/calendar/view.php?view=day&amp;time=', '">');
-  let subject = parse1(event, '<div class="col-11"><a href="https://kadai-moodle.kagawa-u.ac.jp/course/view.php?id=', '</a></div>');
-  let url = parse1(event, '<div class="card-footer text-right bg-transparent">\n                            ', '" class="card-link">');  
-  let description = [''];
-  for (let i = 0; i < eventArr.length; i++) {
-    if (eventArr[i].includes('<div class="description-content col-11">')) {
-      description[i] = parse2(eventArr[i], '<div class="description-content col-11">', '</div>');
-    } else {
-      description[i] = 'お知らせはありません';
-    }
-  }
-
-  let lors = [""];
-  const content = [""];
-  const color = [];
-  const subjectTitle = [""];
-
-  for (let i = 0; i < id.length; i++) {
-    // 取得したurlを利用して、includesで分類（提出、出席、小テスト等）とurlを作成
-    lors[i] = '期限';
-
-    if (url[i].includes("assign")) { 　　　　　　　　　　　　　　　　　　　　　　　// 課題
-      color[i] = 11;
-      url[i] = url[i] + '" class="card-link">提出物をアップロードする</a>';
-      subjectTitle[i] = "課題：" + subject[i].slice(6);
-      
-    } else if (url[i].includes("attendance")) { 　　　　　　　　　　　　　　　　// 出席
-      color[i] = 2;
-      url[i] = url[i] + '" class="card-link">出席登録を行う</a>';
-      subjectTitle[i] = "出席：" + subject[i].slice(6);
-
-    } else if (url[i].includes("quiz")) { 　　　　　　　　　　　　　　　　　　　　// 小テスト
-      color[i] = 5;
-      url[i] = url[i] + '" class="card-link">小テストを受験する</a>';
-      subjectTitle[i] = "小テスト：" + subject[i].slice(6);
-      if (title[i].includes("開始")) {lors[i] = "開始";} 
-
-    } else if (url[i].includes("questionnaire")) { 　　　　　　　　　　　　　　　// アンケート
-      color[i] = 8;
-      url[i] = url[i] + '" class="card-link">アンケートに回答する</a>';
-      subjectTitle[i] = "アンケート：" + subject[i].slice(6);
-
-    } else { 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　// その他（amsplayer,chatなど）
-      color[i] = 7;
-      url[i] = url[i] + '" class="card-link">活動に移動する</a>'
-      subjectTitle[i] = "活動：" + subject[i].slice(6);
-    }
-
-    // 時間割名にURLを付与
-    subject[i] = '<a href="https://kadai-moodle.kagawa-u.ac.jp/course/view.php?id=' + subject[i] + '</a>';
-
-    // 本文を１つに統合
-    content[i] = conbibe(title[i], url[i], subject[i], description[i], due[i], lors[i], preaseUpdate);
-  }
-  return [id, subjectTitle, content, due, color];
+// タグを抽出
+function cheerio($, className, option, val) {
+  const tmp = [];
+  $(className).each((i, elem) => {  
+    if      (option == 'attr') {tmp[i] = $(elem).attr(val)} 
+    else if (option == 'text') {tmp[i] = $(elem).text()   }
+    else                       {tmp[i] = $(elem).html()   }
+  });
+  return tmp;
 }
 
-// 文字列をパースする
-function parse1(html, start, end) {
+// 文字列をパースする 
+function parse(html, start, end) {
   return Parser.data(html).from(start).to(end).iterate(); // 配列 
 }
-function parse2(html, start, end) {
-  return Parser.data(html).from(start).to(end).build(); // 最初のみ
+
+function conbine(title, component, eventtype, courseid, eventlink, description, eventtime, subject) {
+  return `<h2><font color="darkorange">Moodleカレンダー </font><font color="#9acd32">Ver3.${VERSION}</font></h2><br>` + 
+　　　　　 `<h4><font color="#9acd32">★</font> <font color="#ff8c00">${event_link(component, eventlink)}</font></h4><br>` + 
+         `<b><font color="#add8e6">============================</font></b><br>` + 
+         `<font color="#9acd32">■</font>${event_type(eventtype)}：${time_change(eventtime)}<br>` + 
+         `<font color="#9acd32">■</font>時間割名：<font color="#ff8c00"><a href="https://kadai-moodle.kagawa-u.ac.jp/course/view.php?id=${courseid}">${subject}</a></font><br>` +
+         `<font color="#9acd32">■</font>概要<br>` + 
+         `${title}<br>` + 
+         `${descript_orNull(description)}<br>` + 
+         `<font color="#9acd32">■</font>更新日時：${time_change(new Date())}<br>` + 
+         `<b><font color="#add8e6">============================</font></b><br>`;
+
+  // dateObjを{mm月dd日(day of week)hh時mm分}に変換
+  function  time_change(dateObj){
+    let text = '';
+    let aryWeek = ['日', '月', '火', '水', '木', '金', '土'];
+    text = /*dateObj.getFullYear() + '年' + */ 
+        (dateObj.getMonth() + 1) + '月' + 
+        dateObj.getDate() + '日' + 
+        '(' + aryWeek[dateObj.getDay()] + ')' + 
+        dateObj.getHours() + '時' + 
+        dateObj.getMinutes() + '分' /*+ 
+        dateObj.getSeconds() + '秒'*/; 
+    return text;
+  }
+
+  // 本文があるかないか判別
+  function descript_orNull(description) {
+    let text = "";
+    if (String(description)) {text = `<br><font color="#9acd32">■</font>本文(プレビュー版)<br>${description}<br>`}
+    return text;
+  }
+
+  // イベントの種類（時間用）を日本語化
+  function event_type (eventtype) {
+    switch (eventtype) {
+      case 'open'       : return "開始日時";
+      case 'close'      : return "終了日時";
+      case 'due'        : return "提出期限";
+      case 'attendance' : return "出席期限";
+      default           : return "活動日時";
+    }
+  }
+
+  // 活動先のリンク先を作成
+  function event_link (component, eventlink) {
+    switch (component) {
+      case 'mod_assign'       : return `<a href="${eventlink}">提出物をアップロードする</a>`;
+      case 'mod_attendance'   : return `<a href="${eventlink}">出席登録を行う</a>`;
+      case 'mod_questionnaire': return `<a href="${eventlink}">アンケートに回答する</a>`;
+      case 'mod_quiz'         : return `<a href="${eventlink}">テストを受験する</a>`;
+      default                 : return `<a href="${eventlink}">活動に移動する/a>`;
+    }
+  }
 }
 
-// UNIXを{yyyy年mm月dd日(day of week)hh時mm分ss秒}に変換
-function timeChange(dateObj){
-  let text = '';
+function extrack(eventHtml) {
+  // eventHtmlをCheeioに渡す
+  const $eventLists = Cheerio.load(eventHtml);
 
-  let aryWeek = ['日', '月', '火', '水', '木', '金', '土'];
+  // 直近のイベントを[class="calendar-no-results"]で判別し、ない場合は全て0で返す
+  if ($eventLists('.calendar-no-results').html()) {return null;}
 
-  text = dateObj.getFullYear() + '年' + //年の取得
-        (dateObj.getMonth() + 1) + '月' + //月の取得 ※0~11で取得になるため+1
-        dateObj.getDate() + '日' + //日付の取得
-        '(' + aryWeek[dateObj.getDay()] + ')' + //曜日の取得 0~6で取得になるため事前に配列で設定
-        dateObj.getHours() + '時' + //時間の取得
-        dateObj.getMinutes() + '分' /*+ //分の取得
-        dateObj.getSeconds() + '秒'*/; //秒の取得（未使用）
+  // Cheerioで情報を抽出
+  const id        = cheerio($eventLists, '.event'    , 'attr', 'data-event-id'       ); // ID
+  const title     = cheerio($eventLists, '.event'    , 'attr', 'data-event-title'    ); // タイトル
+  const component = cheerio($eventLists, '.event'    , 'attr', 'data-event-component'); // イベントの種類（リンク用）
+  const eventtype = cheerio($eventLists, '.event'    , 'attr', 'data-event-eventtype'); // イベントの種類（時間用）
+  const courseid  = cheerio($eventLists, '.event'    , 'attr', 'data-course-id'      ); // コースID
+  const eventlink = cheerio($eventLists, '.card-link', 'attr', 'href'                ); // リンク
+  const unixtime  = parse(eventHtml, '"https://kadai-moodle.kagawa-u.ac.jp/calendar/view.php?view=day&amp;time=', '"'); // unix時間
+  
+  const description  = [];
+  const subject      = [];
+  const content      = [];
+  const subjectTitle = [];
+  const eventtime    = [];
+  const classNum     = [];
+  
+  eventHtml = cheerio($eventLists, '.event', 'html', null);
 
-  return text;
-}
+  const event = [];
 
-function conbibe(title, url, subject, description, due, lors, update) {
-  return "=====================\n" + 
-         "Moodleカレンダー Ver2." + VERSION + "\n" + 
-         "=====================\n" + 
-         update + 
-         "\n" + 
-         "★" + url + "\n" + 
-         "\n" + 
-         "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + 
-         "\n" +  
-         "■" + lors + "：" + timeChange(new Date(due * 1000)).slice(5) + "\n" + 
-         "\n" + 
-         "■時間割名：" + subject + "\n" + 
-         "\n" +
-         "■概要" + "\n" +
-         "\n" +  
-         title + "\n" +
-         "\n" +  
-         "■本文" + "\n" + 
-         "\n" + 
-         description + "\n" + 
-         "\n" + 
-         "■更新日時：" + timeChange(new Date())　+ "\n" + 
-         "\n" + 
-         "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + 
-         "\n" + 
-         "万一、このシステムによって利用者の不手際が発生しても一切保証を負えませんのでご了承ください。\n" + 
-         'GitHub:<a href="https://github.com/tsukasa0220/MoodleCalendar">MoodleCalendar</a>'
+  for (let i = 0; i < id.length; i++) {
+    eventtime[i]   = new Date(unixtime[i] * 1000);
+    description[i] = cheerio(Cheerio.load(eventHtml[i]), '.description-content',                                                           'html', null);
+    subject[i]     = cheerio(Cheerio.load(eventHtml[i]), `[href="https://kadai-moodle.kagawa-u.ac.jp/course/view.php?id=${courseid[i]}"]`, 'text', null);
+
+    switch (component[i]) {
+      case 'mod_assign'       : subjectTitle[i] = "課題：" + subject[i];       break;
+      case 'mod_attendance'   : subjectTitle[i] = "出席：" + subject[i];
+                                classNum[i] = start_attendance(eventtime[i]); break;
+      case 'mod_questionnaire': subjectTitle[i] = "アンケート：" + subject[i];  break;
+      case 'mod_quiz'         : subjectTitle[i] = "テスト：" + subject[i];     break;
+      default                 : subjectTitle[i] = "活動：" + subject[i];       break;
+    }
+
+    // １つに統合
+    content[i] = conbine(title[i], component[i], eventtype[i], courseid[i], eventlink[i], description[i], eventtime[i], subject[i]);
+
+    // オブジェクト化 
+    event[i] = {id: id[i], subjectTitle: subjectTitle[i], eventtime: eventtime[i], classNum: classNum[i], component: component[i], content: content[i]};
+  }
+  return event;
+
+  // 出席する時間を何時間目で返す
+  function  start_attendance(dateObj) {
+    const timeMinute = dateObj.getHours() * 60 + dateObj.getMinutes();
+    if      (timeMinute <= 630)  {return 1;} 
+    else if (timeMinute <= 730)  {return 2;}
+    else if (timeMinute <= 880)  {return 3;} 
+    else if (timeMinute <= 980)  {return 4;} 
+    else if (timeMinute <= 1080) {return 5;} 
+    else{return 0;}
+  }
 }

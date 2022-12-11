@@ -1,70 +1,49 @@
 // Cheerio: 1ReeQ6WO8kKNxoaA_O0XEQ589cIrRvEBA9qcWpNqdOP17i47u6N9M5Xh0
+// Parser : 1Mc8BthYthXx6CoIz90-JiSzSafVnT6U3t0z_W3hLTAX5ek4w0G_EIrNw
 
-const DEBUG = 0;
-const VERSION = 4;
+const DEBUG = false;
+const VERSION = 0;
 
-function main (username, password, calendarId) {
+function main (user, password) {
+  // DEBUG
+  if (DEBUG) {Logger.log("デバッグ情報：オン");}
+
+  // ユーザプロパティの確認
+  if (user == null || password == null) {return 0;}
+
   // DEBUG:アカウント情報を表示
-  if (DEBUG) {console.log(username + "\n" + password + "\n" + calendarId + "\n");}
+  if (DEBUG) {Logger.log("デバッグ情報：\n学籍番号" + user + "\nパスワード" + password);}
 
-  //1
-  console.log("ソースを取得中");
   // moodle.gsでログイン処理を行う
-  const html = login(username, password);
-  if (html == false) {return 0;}
+  const eventHtml = login(user, password);
+  if (eventHtml == false) {return 0;}
 
-  // 取得したデータから直近イベントをパース
-  const event = parse2(html, 'class="current text-center"', 'class="singlebutton"');
+  // DEBUG:eventHtmlのソースを表示
+  if (DEBUG) {Logger.log(eventHtml);}
 
-  //パースに失敗した場合は終了
-  if (event.includes("<!DOCTYPE html>")) {
-    console.log("ソースの取得失敗");
-    return 0;
-  }
-  console.log("ソースの取得成功");
-  
-  //2
-  console.log("ソースを解析・抽出中");
   // extrack.gsで取得した直近イベントのHTML文字列をパースしてID、タイトル、期限、科目、URL（共通部分は除去）を抜き出す
-  let [id, title, content, due, color] = extrack(event);
-  if (DEBUG) {console.log(id);}
-  if (id.toString().includes("div")) {console.log("イベントなし"); return 0;}
+  const event = extrack(eventHtml);
+  if (event == null) {return 0;}
 
-  //DEBUG:イベントの情報を表示
-  console.log("ソースの解析・抽出完了");
+  // イベントの情報を表示
+  if (DEBUG) {Logger.log("デバッグ情報：イベントのオブジェクト\n" + event);}
 
-  //3
-  console.log("Googleカレンダーに追加中");
-  // googleカレンダーのタイトルを取得
-  const myTitle = getCalendarEvent(calendarId);
+  // calender.gsでGoogleカレンダーのイベント情報（タイトル）を取得
+  const myTitle = getCalendarEvent(user);
 
   // DEBUG:googleカレンダーのイベントを表示
-  if (DEBUG) {console.log(myTitle)}
+  if (DEBUG) {Logger.log("デバッグ情報：取得したイベントのタイトル\n" + myTitle);}
 
-  // googleカレンダーのイベントとHTMLから取得したイベントのタイトル([ID:00000])が重複している場合はスキップ、していない場合はgoogleカレンダーに追加
-  for (let i = 0; i < id.length; i++) {
-    let tmp = 1;
+  // googleカレンダーのイベントとHTMLから取得したイベントのタイトル([ID:XXXXX])が重複している場合はスキップ、していない場合はgoogleカレンダーに追加  
+  for (let i = 0; i < event.length; i++) {
+    let flg = true;
     for (let j = 0; j < myTitle.length; j++) {
-      if (myTitle[j].includes(id[i])) {
-        tmp = 0;
-        if (DEBUG) {console.log("skip")}
+      if (myTitle[j].includes(event[i].id)) {
+        flg = false;
         break;
       }
     }
-    if (tmp) {
-      createEvent(calendarId ,id[i], title[i], content[i], due[i], color[i]);
-      if (DEBUG) {console.log("追加" + (i + 1))}
-    }
+    if (flg) {createEvent(event[i], user)}
   }
-  console.log("Googleカレンダーに追加完了");
-}
-        break;
-      }
-    }
-    if (tmp) {
-      createEvent(calenderId ,id[i], title[i], content[i], due[i], color[i]);
-      if (DEBUG) {console.log("追加" + (i + 1))}
-    }
-  }
-  console.log("追加完了");
+  return 0;
 }
