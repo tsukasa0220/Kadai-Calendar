@@ -12,7 +12,7 @@ GASを使ってGoogleカレンダーにMoodleの課題提出や出席登録の�
 香川大学
 
 <h2>導入方法</h2>
-Googleアカウントにログインして<a href="https://docs.google.com/spreadsheets/d/1tDmmh0ZugmI13IOZHzat3ggei1hq-D10hisLPdozEz4/edit#gid=0">こちらに</a>アクセス
+工事中　アドベントカレンダーまでには間に合わせたい
 
 <h3>Ver2.2</h3>
 moodle.gsのユーザーエージェントを更新しました。 <br>
