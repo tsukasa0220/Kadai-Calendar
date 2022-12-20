@@ -1,76 +1,99 @@
-// Googleカレンダーのイベント情報を取得する
-function getCalendarEvent(user) {
-  // アクセス可能なカレンダーのIDを指定して、Googleカレンダーを取得
+const START_TIME = -7;
+const END_TIME = 31;
 
-  const name = `香川大学Moodleカレンダー[${user}]`;
-  const options = {
-    timeZone: "Asia/Tokyo",
-    color: "#7cb342"
-    };
+function calendar(eventsObj) {
 
-  let myCalendars = CalendarApp.getCalendarsByName(name);
+  const myCalendarObj = search_calendar();
 
-  if (myCalendars[0] == null) {
-    CalendarApp.createCalendar(name, options);
-    myCalendars = CalendarApp.getCalendarsByName(name);
-    if (DEBUG) {Logger.log("処理中：カレンダーを新しく作成します")}
+  if (myCalendarObj == null) {
+    logout();
+    return null;
   }
 
-  let myCalendar = myCalendars[0];
+  const myEventsTitle = get_event(myCalendarObj);
+
+  const addEventNumber = set_event(myCalendarObj, eventsObj, myEventsTitle);
+
+  return addEventNumber;
+
+  function search_calendar() {
+    const userProperties = PropertiesService.getUserProperties();
+    // カレンダーID
+    const calendarId = userProperties.getProperty('calendarId');
   
-  // イベントの開始日(-7)
-  let startDate = new Date();
-  startDate.setDate(startDate.getDate() - 7);
-
-  // イベントの終了日(+31)
-  let endDate = new Date();
-  endDate.setDate(endDate.getDate() + 31);
-
-  // 開始日～終了日に存在するイベントを取得
-  let myEvent = myCalendar.getEvents(startDate, endDate);
-  if (!myEvent) {return 0;}
-  
-  // カレンダーの内容だけを取得して配列に代入する
-  let myTitle = []
-  for(let i = 0 ; i < myEvent.length ; i++ ){
-    myTitle[i] = myEvent[i].getTitle();
+    // カレンダーのオブジェクト取得
+    return CalendarApp.getCalendarById(calendarId);
   }
-  return myTitle;
-}
 
-// Googleカレンダーにイベントを追加
-function createEvent(event, user) {
-  // 指定したgoogleカレンダーのIDを取得
-  let calendars = CalendarApp.getCalendarsByName(`香川大学Moodleカレンダー[${user}]`);
-  let calendar = calendars[0];
+  // Googleカレンダーのイベント情報を取得する
+  function get_event(myCalendarObj) {
+    // イベントの開始日
+    let startDate = new Date();
+    startDate.setDate(startDate.getDate() + START_TIME);
 
-  // タイトルを指定
-  let title = event.subjectTitle + '[ID:' + event.id + ']';
+    // イベントの終了日
+    let endDate = new Date();
+    endDate.setDate(endDate.getDate() + END_TIME);
 
-  // 時間を指定
-  let startTime;
-  switch (event.classNum) {
-    case 1: startTime = new Date(event.eventtime.getFullYear(), event.eventtime.getMonth(), event.eventtime.getDate(),  8, 50, 0); break;
-    case 2: startTime = new Date(event.eventtime.getFullYear(), event.eventtime.getMonth(), event.eventtime.getDate(), 10, 30, 0); break;
-    case 3: startTime = new Date(event.eventtime.getFullYear(), event.eventtime.getMonth(), event.eventtime.getDate(), 13, 00, 0); break;
-    case 4: startTime = new Date(event.eventtime.getFullYear(), event.eventtime.getMonth(), event.eventtime.getDate(), 14, 40, 0); break;
-    case 5: startTime = new Date(event.eventtime.getFullYear(), event.eventtime.getMonth(), event.eventtime.getDate(), 16, 20, 0); break;
-    default : startTime = event.eventtime; break;
+    // 開始日～終了日に存在するイベントを取得
+    let myEventsObj = myCalendarObj.getEvents(startDate, endDate);
+    if (myEventsObj == null) {return 0;}
+
+    // カレンダーの内容だけを取得して配列に代入する
+    let myEventsTitle = []
+    for(let i = 0; i < myEventsObj.length; i++){
+      myEventsTitle[i] = myEventsObj[i].getTitle();
+    }
+    return myEventsTitle;
   }
-  let endTime = event.eventtime;
 
-  // イベントの説明
-  let options = {description: event.content}
+  // Googleカレンダーにイベントを追加
+  function set_event(myCalendarObj, eventsObj, myEventsTitle) {
+    let addEventNumber = 0;
+    for (let i = 0; i < eventsObj.length; i++) {
+      let flg = true;
+      for (let j = 0; j < myEventsTitle.length; j++) {
+        if (myEventsTitle[j].includes(eventsObj[i].id)) {
+          flg = false;
+          break;
+        }
+      } 
+      if (flg) {
+        create_event(eventsObj[i], myCalendarObj);
+        addEventNumber++;
+      }
+    }
+    return addEventNumber;
 
-  // イベントを追加
-  let newEvent = calendar.createEvent(title, startTime, endTime, options);
+    function create_event(eventObj, myCalendarObj) {
+      let title = eventObj.subjectTitle + '[' + eventObj.id + ']';
 
-  // 追加したイベントの色を指定
-  switch (event.component) {
-    case 'mod_assign'       : newEvent.setColor(11); break;
-    case 'mod_attendance'   : newEvent.setColor(10); break;
-    case 'mod_quiz'         : newEvent.setColor(5);  break;
-    case 'mod_questionnaire': newEvent.setColor(8);  break;
-    default                 : newEvent.setColor(7);  break;
+      // 時間を指定
+      let startTime;
+      switch (eventObj.classNum) {
+        case 1: startTime = new Date(eventObj.eventtime.getFullYear(), eventObj.eventtime.getMonth(), eventObj.eventtime.getDate(),  8, 50, 0); break;
+        case 2: startTime = new Date(eventObj.eventtime.getFullYear(), eventObj.eventtime.getMonth(), eventObj.eventtime.getDate(), 10, 30, 0); break;
+        case 3: startTime = new Date(eventObj.eventtime.getFullYear(), eventObj.eventtime.getMonth(), eventObj.eventtime.getDate(), 13, 00, 0); break;
+        case 4: startTime = new Date(eventObj.eventtime.getFullYear(), eventObj.eventtime.getMonth(), eventObj.eventtime.getDate(), 14, 40, 0); break;
+        case 5: startTime = new Date(eventObj.eventtime.getFullYear(), eventObj.eventtime.getMonth(), eventObj.eventtime.getDate(), 16, 20, 0); break;
+        default : startTime = eventObj.eventtime; break;
+      }
+      let endTime = eventObj.eventtime;
+
+      // イベントの説明
+      let options = {description: eventObj.content};
+
+      // イベントを追加
+      let newEvent = myCalendarObj.createEvent(title, startTime, endTime, options);
+
+      // 追加したイベントの色を指定
+      switch (eventObj.component) {
+        case 'mod_assign'       : newEvent.setColor(11); break;
+        case 'mod_attendance'   : newEvent.setColor(10); break;
+        case 'mod_quiz'         : newEvent.setColor(5);  break;
+        case 'mod_questionnaire': newEvent.setColor(8);  break;
+        default                 : newEvent.setColor(7);  break;
+      }
+    }
   }
 }

@@ -18,7 +18,7 @@ class CookieUtil {
 const user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.42';
 
 // moodleへのログイン処理
-function login(id, pass) {
+function login(username, password) {
   let response, cookies, data, $, headers, payload, options, moodleSession;
 
   // ログインページを開く(GET) <200>
@@ -52,8 +52,8 @@ function login(id, pass) {
   }
   payload = {
     'logintoken': logintoken,
-    'username': id,
-    'password': pass,
+    'username': username,
+    'password': password,
   }
   options = {
     'method': 'post',

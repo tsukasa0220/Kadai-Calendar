@@ -15,7 +15,7 @@ function parse(html, start, end) {
 }
 
 function conbine(title, component, eventtype, courseid, eventlink, description, eventtime, subject) {
-  return `<h2><font color="darkorange">Moodleカレンダー </font><font color="#9acd32">Ver3.${VERSION}</font></h2><br>` + 
+  return `<h2><font color="darkorange">Kadai-Calendar </font><font color="#9acd32">Ver${VERSION}</font></h2><br>` + 
 　　　　　 `<h4><font color="#9acd32">★</font> <font color="#ff8c00">${event_link(component, eventlink)}</font></h4><br>` + 
          `<b><font color="#add8e6">============================</font></b><br>` + 
          `<font color="#9acd32">■</font>${event_type(eventtype)}：${time_change(eventtime)}<br>` + 
