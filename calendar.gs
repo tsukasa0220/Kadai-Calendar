@@ -1,61 +1,72 @@
 const START_TIME = -7;
 const END_TIME = 31;
 
+// メイン関数
 function calendar(eventsObj) {
-
+  // Kadai-Calendar[s20t000]をGoogleカレンダーのリストから探索
   const myCalendarObj = search_calendar();
 
+  // Kadai-Calendar[s20t000]がなければKadai-Calendarの登録を強制解除
   if (myCalendarObj == null) {
     logout();
     return null;
   }
+  
+  // Kadai-Calendar[s20t000]内にあるイベントを取得
+  const myEventsObj = get_event(myCalendarObj);
 
-  const myEventsTitle = get_event(myCalendarObj);
-
-  const addEventNumber = set_event(myCalendarObj, eventsObj, myEventsTitle);
-
+  // Kadai-Calendar[s20t000]に新しいイベント追加, 追加したイベントの数を返却
+  const addEventNumber = set_event(myCalendarObj, eventsObj, myEventsObj);
   return addEventNumber;
 
+  // Kadai-Calendar[s20t000]をGoogleカレンダーのリストから探索
   function search_calendar() {
+    // ユーザプロパティ
     const userProperties = PropertiesService.getUserProperties();
-    // カレンダーID
+    
+    // ユーザプロパティからカレンダーIDを取得
     const calendarId = userProperties.getProperty('calendarId');
   
-    // カレンダーのオブジェクト取得
+    // カレンダーIDからKadai-Calendar[s20t000]のイベントのオブジェクト取得
     return CalendarApp.getCalendarById(calendarId);
   }
 
-  // Googleカレンダーのイベント情報を取得する
+  // Kadai-Calendar[s20t000]内にあるイベントを取得
   function get_event(myCalendarObj) {
-    // イベントの開始日
+    // イベントの開始日の範囲を指定（現在＋START_TIME）
     let startDate = new Date();
     startDate.setDate(startDate.getDate() + START_TIME);
 
-    // イベントの終了日
+    // イベントの終了日の範囲を指定（現在＋END_TIME）
     let endDate = new Date();
     endDate.setDate(endDate.getDate() + END_TIME);
 
-    // 開始日～終了日に存在するイベントを取得
+    // 開始日～終了日の範囲に存在するイベントを取得
     let myEventsObj = myCalendarObj.getEvents(startDate, endDate);
     if (myEventsObj == null) {return 0;}
 
-    // カレンダーの内容だけを取得して配列に代入する
-    let myEventsTitle = []
-    for(let i = 0; i < myEventsObj.length; i++){
-      myEventsTitle[i] = myEventsObj[i].getTitle();
-    }
-    return myEventsTitle;
+    // // カレンダーのタイトルと日時を取得して返却
+    // let myEvents = [];
+    // for(let i = 0; i < myEventsObj.length; i++){
+    //   myEvents[i] = {id: my, title: myEventsObj[i].getTitle(), date: myEventsObj[i].getEndTime()};
+    // }
+    // Logger.log(myEvents);
+    return myEventsObj;
   }
 
-  // Googleカレンダーにイベントを追加
-  function set_event(myCalendarObj, eventsObj, myEventsTitle) {
+  // Kadai-Calendar[s20t000]に新しいイベント追加, 追加したイベントの数を返却
+  function set_event(myCalendarObj, eventsObj, myEventsObj) {
     let addEventNumber = 0;
     for (let i = 0; i < eventsObj.length; i++) {
       let flg = true;
-      for (let j = 0; j < myEventsTitle.length; j++) {
-        if (myEventsTitle[j].includes(eventsObj[i].id)) {
-          flg = false;
-          break;
+      for (let j = 0; j < myEventsObj.length; j++) {
+        if (myEventsObj[j].getTitle().includes(eventsObj[i].id)) {
+          if (myEventsObj[j].getEndTime().getFullYear() == eventsObj[i].eventtime.getFullYear() &&
+              myEventsObj[j].getEndTime().getMonth()    == eventsObj[i].eventtime.getMonth()    &&
+              myEventsObj[j].getEndTime().getDay()      == eventsObj[i].eventtime.getDay()      &&
+              myEventsObj[j].getEndTime().getHours()    == eventsObj[i].eventtime.getHours()    &&
+              myEventsObj[j].getEndTime().getMinutes()  == eventsObj[i].eventtime.getMinutes()    ) {flg = false;} 
+          else                                                                                      {myEventsObj[j].deleteEvent();}  
         }
       } 
       if (flg) {
@@ -66,7 +77,7 @@ function calendar(eventsObj) {
     return addEventNumber;
 
     function create_event(eventObj, myCalendarObj) {
-      let title = eventObj.subjectTitle + '[' + eventObj.id + ']';
+      let title = eventObj.subjectTitle + `[${eventObj.id}]`;
 
       // 時間を指定
       let startTime;
