@@ -8,6 +8,15 @@ function doGet() {
   return HtmlService.createTemplateFromFile(website).evaluate().setTitle('Kadai-Calendar');
 }
 
+function redirect() {
+  const userProperties = PropertiesService.getUserProperties();
+  let website = 'login_before';
+  if (userProperties.getProperty('auth')) {
+    website = 'login_after';
+  }
+  return HtmlService.createTemplateFromFile(website).evaluate().setTitle('Kadai-Calendar');
+}
+
 // CSS用
 function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
@@ -19,12 +28,12 @@ function onload() {
 }
 
 // サイト内処理
-function setup(username, password) {
+function login(username, password) {
   const userProperties = PropertiesService.getUserProperties();
   if (userProperties.getProperty('auth')) {
     return -1;
   }
-  if (login(username, password)) {
+  if (moodle_login(username, password)) {
     userProperties.setProperty('username', username);
     userProperties.setProperty('password', password);
     userProperties.setProperty('auth', true);

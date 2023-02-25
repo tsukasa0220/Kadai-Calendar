@@ -45,12 +45,6 @@ function calendar(eventsObj) {
     let myEventsObj = myCalendarObj.getEvents(startDate, endDate);
     if (myEventsObj == null) {return 0;}
 
-    // // カレンダーのタイトルと日時を取得して返却
-    // let myEvents = [];
-    // for(let i = 0; i < myEventsObj.length; i++){
-    //   myEvents[i] = {id: my, title: myEventsObj[i].getTitle(), date: myEventsObj[i].getEndTime()};
-    // }
-    // Logger.log(myEvents);
     return myEventsObj;
   }
 

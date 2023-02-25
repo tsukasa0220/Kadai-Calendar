@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Kadai-Calendar</title>
     <base target="_top">
-    <?!= include('css'); ?>
+    <?!= include('css_primary'); ?>
 </head>
 
 <body>
@@ -12,72 +12,64 @@
 <div class="row justify-content-center">
 <div class="col-xl-6 col-sm-8 ">
 <div class="card">
-    <div class="card-block">
-            <h1 class="h2 card-header text-center" aria-label="香川大学 Moodle: ログイン">Kadai-Calendar</h1>
-        <div class="card-body">
-          <b>
-        <div id="inResponse"><br></div>
-            <div class="row justify-content-md-center">
-                <div class="col-md-5">
-                    <form class="mt-3" id="login" name="login">
-                        <div class="form-group">
-                            <label for="username" class="sr-only">
-                                    ユーザ名
-                            </label>
-                            <input type="text" name="username" id="username"
-                                class="form-control lock-click"
-                                value=""
-                                placeholder="ユーザ名"
-                                autocomplete="username">
-                        </div>
-                        <div class="form-group">
-                            <label for="password" class="sr-only">パスワード</label>
-                            <input type="password" name="password" id="password" value=""
-                                class="form-control lock-click"
-                                placeholder="パスワード"
-                                autocomplete="current-password">
-                        </div>
-                        <button type="button" id="btn-setup" class="btn btn-primary btn-block mt-3" onclick="setup_EV()">ログイン</button>
-                    </form>
-                </div>
-                <div class="col-md-5">
-                  <div class="mt-3">
-                    <p>※注意書き<br>システムの不具合によって課題が出せなかったなどのトラブルに関しては一切保証できません<br>おねしゃす  by強欲</p>
-                    <p>バージョン0.9.0(ベータ版)</p>
-                  </div>
-                </div>
+  <div class="card-block">
+    <h1 class="h2 card-header text-center" aria-label="香川大学 Moodle: ログイン">Kadai-Calendar</h1>
+    <div class="card-body"><b>
+      <div id="inResponse"><br></div>
+      <div class="row justify-content-md-center">
+        <div class="col-md-5">
+          <form class="mt-3" name="form" id="form">
+            <div class="form-group">
+              <label for="username" class="sr-only">ユーザ名</label>
+              <input type="text" name="username" id="username" class="form-control" value="" placeholder="ユーザ名" autocomplete="username">
             </div>
+            <div class="form-group">
+              <label for="password" class="sr-only">パスワード</label>
+              <input type="password" name="password" id="password" value="" class="form-control" placeholder="パスワード" autocomplete="current-password">
+            </div>
+            <button type="button" id="login" class="btn btn-primary btn-block mt-3" onclick="login_web()">ログイン</button>
+          </form>
         </div>
+        <div class="col-md-5">
+          <div class="mt-3">
+            <p>※注意書き<br>システムの不具合によって課題が出せなかったなどのトラブルに関しては一切保証できません<br>おねしゃす  by強欲</p>
+            <p id="version">バージョン0.9.5(ベータ版)</p>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 </div>
-</div></div>
-  <script>
-    function setup_EV() {
-      const now = document.getElementById('inResponse');
-      document.getElementById("username").disabled = true;
-      document.getElementById("password").disabled = true;
-      document.getElementById("btn-setup").disabled = true;
-      now.innerHTML = '<center><div class="mt-3">処理中...</div></center>'
-      const username = document.login.username.value;
-      const password = document.login.password.value;
-      google.script.run.withSuccessHandler(success).setup(username, password);
-    }
+</div>
+</div>
+<script>
+  // ログイン処理開始
+  function login_web() {
+    document.getElementById("username").disabled = true;
+    document.getElementById("password").disabled = true;
+    document.getElementById("login"   ).disabled = true;
+    document.getElementById('inResponse').innerHTML = '<center><div class="mt-3">処理中...</div></center>';
+    const username = document.form.username.value;
+    const password = document.form.password.value;
+    google.script.run.withSuccessHandler(login_result).login(username, password);
+  }
 
-    function success(n){
-      const inResponse = document.getElementById('inResponse');
-      if (n == -1) {
-        inResponse.innerHTML = '<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>すでに登録が完了しています　ページを更新してください</center></div></div>';
-      } else if (n) {
-        inResponse.innerHTML = '<center><div class="mt-3 alert-success">登録されました　ページを更新してください</div></center>';
-      } else {
-        inResponse.innerHTML = '<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>ユーザ名またはパスワードが間違っています</center></div></div>';
-      }
-      document.getElementById("username").disabled = false;
-      document.getElementById("password").disabled = false;
-      document.getElementById("btn-setup").disabled = false;
+  // ログイン処理結果
+  function login_result(n){
+    const inResponse = document.getElementById('inResponse');
+    if (n == -1) {
+      inResponse.innerHTML = '<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>すでに登録が完了しています　ページを更新してください</center></div></div>';
+    } else if (n) {
+      inResponse.innerHTML = '<center><div class="mt-3 alert-success">登録されました　ページを更新してください</div></center>';
+    } else {
+      inResponse.innerHTML = '<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>ユーザ名またはパスワードが間違っています</center></div></div>';
     }
-    
-  </script>
+    document.getElementById("username").disabled = false;
+    document.getElementById("password").disabled = false;
+    document.getElementById("login"   ).disabled = false;
+    document.dispatchEvent( new KeyboardEvent( "keypress",{key: "F5" })) ;
+  }  
+</script>
 </body>
 </html>

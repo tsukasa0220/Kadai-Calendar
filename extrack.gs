@@ -14,6 +14,7 @@ function parse(html, start, end) {
   return Parser.data(html).from(start).to(end).iterate(); // 配列 
 }
 
+// １つに統合
 function conbine(title, component, eventtype, courseid, eventlink, description, eventtime, subject) {
   return `<h2><font color="darkorange">Kadai-Calendar </font><font color="#9acd32">Ver${VERSION}</font></h2><br>` + 
 　　　　　 `<h4><font color="#9acd32">★</font> <font color="#ff8c00">${event_link(component, eventlink)}</font></h4><br>` + 
@@ -70,6 +71,7 @@ function conbine(title, component, eventtype, courseid, eventlink, description, 
   }
 }
 
+// メイン関数
 function extrack(eventHtml) {
   // eventHtmlをCheeioに渡す
   const $eventLists = Cheerio.load(eventHtml);

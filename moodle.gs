@@ -14,21 +14,18 @@ class CookieUtil {
   }
 }
 
-// ブラウザにからアクセスしているかのように偽装（一応マクロ対策）
-const user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.42';
-
 // moodleへのログイン処理
-function login(username, password) {
+function moodle_login(username, password) {
   let response, cookies, data, $, headers, payload, options, moodleSession;
 
   // ログインページを開く(GET) <200>
   headers = {
-    'user-agent': user_agent,
+    'user-agent': USER_AGENT,
   }
   options = {
     'headers': headers,
   }
-  response = UrlFetchApp.fetch('https://kadai-moodle.kagawa-u.ac.jp/login/index.php', options);
+  response = UrlFetchApp.fetch(LOGIN_URL, options);
 
   // ヘッダーから必要なcookieを取り出す
   cookies = response.getHeaders()["Set-Cookie"];
@@ -43,12 +40,12 @@ function login(username, password) {
   $ = Cheerio.load(data);
   const logintoken = $('[name="logintoken"]').val();
 
-  Utilities.sleep(500);
+  Utilities.sleep(300);
 
   // ログインフォーム送信(POST) <303>
   headers = {
     'cookie': moodleSession,
-    'user-agent': user_agent,
+    'user-agent': USER_AGENT,
   }
   payload = {
     'logintoken': logintoken,
@@ -61,7 +58,7 @@ function login(username, password) {
     'payload': payload,
     'followRedirects': false,
   }
-  response = UrlFetchApp.fetch('https://kadai-moodle.kagawa-u.ac.jp/login/index.php', options);
+  response = UrlFetchApp.fetch(LOGIN_URL, options);
 
   // MoodleSessionを取得し次のリクエストにセット
   // Set-cookieが複数あるため，キーが”MoodleSession”の値を取り出す
@@ -77,18 +74,18 @@ function login(username, password) {
     return false;
   }
 
-  Utilities.sleep(500);
+  Utilities.sleep(300);
 
   // 直近イベントのカレンダーのページ(GET) <200>
   headers = {
     'cookie': moodleSession,
-    'user-agent': user_agent,
+    'user-agent': USER_AGENT,
   }
   options = {
     'method': 'get',
     'headers': headers,
   }
-  response = UrlFetchApp.fetch('https://kadai-moodle.kagawa-u.ac.jp/calendar/view.php?view=upcoming&course=1', options);
+  response = UrlFetchApp.fetch(CALENDAR_URL, options);
 
 　// 得られたレスポンスが、カレンダーのソースか[class=".eventlist"]で判断、ある場合はその入れ子であるHTMLソースを返す
   data = response.getContentText("UTF-8");
