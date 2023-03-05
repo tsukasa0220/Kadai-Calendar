@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <title>Kadai-Calendar</title>
     <base target="_top">
-    <?!= include('css_primary'); ?>
+    <?!= include('css'); ?>
 </head>
-
 <body>
 <div role="main"><span id="maincontent"></span><div class="my-1 my-sm-5"></div>
 <div class="row justify-content-center">
 <div class="col-xl-6 col-sm-8 ">
 <div class="card">
   <div class="card-block">
-    <h1 class="h2 card-header text-center" aria-label="香川大学 Moodle: ログイン">Kadai-Calendar</h1>
+    <h1 class="h2 card-header text-center">Kadai-Calendar<div id="version"></div></h1>
     <div class="card-body"><b>
       <div id="inResponse"><br></div>
       <div class="row justify-content-md-center">
@@ -27,13 +26,12 @@
               <label for="password" class="sr-only">パスワード</label>
               <input type="password" name="password" id="password" value="" class="form-control" placeholder="パスワード" autocomplete="current-password">
             </div>
-            <button type="button" id="login" class="btn btn-primary btn-block mt-3" onclick="login_web()">ログイン</button>
+            <button type="button" id="login" class="btn btn-green btn-block mt-3" onclick="login_web()">ログイン</button>
           </form>
         </div>
         <div class="col-md-5">
           <div class="mt-3">
-            <p>※注意書き<br>システムの不具合によって課題が出せなかったなどのトラブルに関しては一切保証できません<br>おねしゃす  by強欲</p>
-            <p id="version">バージョン0.9.5(ベータ版)</p>
+            <p>※注意書き<br>システムの不具合によって課題が出せなかったなどのトラブルに関しては一切保証できません。おねしゃす！<br>リンク先：<a href="https://kadai-moodle.kagawa-u.ac.jp/login/index.php">香川大学Moodle</a></p>
           </div>
         </div>
       </div>
@@ -63,12 +61,11 @@
     } else if (n) {
       inResponse.innerHTML = '<center><div class="mt-3 alert-success">登録されました　ページを更新してください</div></center>';
     } else {
-      inResponse.innerHTML = '<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>ユーザ名またはパスワードが間違っています</center></div></div>';
+      inResponse.innerHTML = '<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>Moodleにアクセスできないか、ユーザ名またはパスワードが間違っています</center></div></div>';
     }
     document.getElementById("username").disabled = false;
     document.getElementById("password").disabled = false;
     document.getElementById("login"   ).disabled = false;
-    document.dispatchEvent( new KeyboardEvent( "keypress",{key: "F5" })) ;
   }  
 </script>
 </body>

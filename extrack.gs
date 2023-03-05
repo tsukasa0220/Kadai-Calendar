@@ -17,7 +17,7 @@ function parse(html, start, end) {
 // １つに統合
 function conbine(title, component, eventtype, courseid, eventlink, description, eventtime, subject) {
   return `<h2><font color="darkorange">Kadai-Calendar </font><font color="#9acd32">Ver${VERSION}</font></h2><br>` + 
-　　　　　 `<h4><font color="#9acd32">★</font> <font color="#ff8c00">${event_link(component, eventlink)}</font></h4><br>` + 
+         `<h4><font color="#9acd32">★</font> <font color="#ff8c00">${event_link(component, eventlink)}</font></h4><br>` + 
          `<b><font color="#add8e6">============================</font></b><br>` + 
          `<font color="#9acd32">■</font>${event_type(eventtype)}：${time_change(eventtime)}<br>` + 
          `<font color="#9acd32">■</font>時間割名：<font color="#ff8c00"><a href="https://kadai-moodle.kagawa-u.ac.jp/course/view.php?id=${courseid}">${subject}</a></font><br>` +

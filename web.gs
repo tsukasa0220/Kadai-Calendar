@@ -1,4 +1,4 @@
-// サイトをひらいたときの処理
+// HTMLファイルの読み込み
 function doGet() {
   const userProperties = PropertiesService.getUserProperties();
   let website = 'login_before';
@@ -8,26 +8,27 @@ function doGet() {
   return HtmlService.createTemplateFromFile(website).evaluate().setTitle('Kadai-Calendar');
 }
 
-function redirect() {
-  const userProperties = PropertiesService.getUserProperties();
-  let website = 'login_before';
-  if (userProperties.getProperty('auth')) {
-    website = 'login_after';
-  }
-  return HtmlService.createTemplateFromFile(website).evaluate().setTitle('Kadai-Calendar');
-}
-
-// CSS用
+// CSSファイルの読み込み
 function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
+// function redirect() {
+//   const userProperties = PropertiesService.getUserProperties();
+//   let website = 'login_before';
+//   if (userProperties.getProperty('auth')) {
+//     website = 'login_after';
+//   }
+//   return HtmlService.createTemplateFromFile(website).evaluate().setTitle('Kadai-Calendar');
+// }
+
+// 登録したユーザ名、カレンダー、バージョンの表示
 function onload() {
   const userProperties = PropertiesService.getUserProperties();
-  return [userProperties.getProperty('username'), userProperties.getProperty('calendarId')];
+  return [userProperties.getProperty('username'), userProperties.getProperty('calendarId'), VERSION];
 }
 
-// サイト内処理
+// ログイン（初期登録）処理
 function login(username, password) {
   const userProperties = PropertiesService.getUserProperties();
   if (userProperties.getProperty('auth')) {
@@ -52,6 +53,7 @@ function login(username, password) {
   }
 }
 
+// カレンダーの更新処理
 function update_calendar() {
   const userProperties = PropertiesService.getUserProperties();
   if (!userProperties.getProperty('auth')) {return [-1, -1]}
@@ -60,6 +62,7 @@ function update_calendar() {
   return [main(username, password), userProperties.getProperty('calendarId')];
 }
 
+// ログアウト（登録解除）処理
 function logout() {
   const userProperties = PropertiesService.getUserProperties();
   if (!userProperties.getProperty('auth')) {return -1}

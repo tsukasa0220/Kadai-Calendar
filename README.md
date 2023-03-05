@@ -20,3 +20,7 @@ https://sites.google.com/view/kadai-calendar/
 0.9.0：MoodleCalendarからKadai-Calendarに名称変更、Webアプリケーション化
 
 0.9.4：課題の日時が教授によって変更された場合に予定が変更されない問題を修正
+
+0.9.5：サイトの外観を変更、カレンダーの表示は非推奨に変更
+
+0.9.6：Moodleに接続できない場合のエラーハンドリングを追加・修正

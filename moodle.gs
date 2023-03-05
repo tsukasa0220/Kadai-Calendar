@@ -24,8 +24,16 @@ function moodle_login(username, password) {
   }
   options = {
     'headers': headers,
+    'muteHttpExceptions': true,
+    "validateHttpsCertificates" : false,
+    "followRedirects" : false,
   }
-  response = UrlFetchApp.fetch(LOGIN_URL, options);
+  try {
+    response = UrlFetchApp.fetch(LOGIN_URL, options);
+  } catch(e) {
+    Logger.log("Error:" + e);
+    return false;
+  }
 
   // ヘッダーから必要なcookieを取り出す
   cookies = response.getHeaders()["Set-Cookie"];
@@ -66,7 +74,7 @@ function moodle_login(username, password) {
   for (const c in cookies) {
     const cookie = cookies[c]
     if (CookieUtil.getValue(cookie, 'MoodleSession')) {
-      moodleSession = CookieUtil.getValue(cookie, 'MoodleSession')
+      moodleSession = CookieUtil.getValue(cookie, 'MoodleSession');
     }
   }
   if (moodleSession == false) {
@@ -87,7 +95,7 @@ function moodle_login(username, password) {
   }
   response = UrlFetchApp.fetch(CALENDAR_URL, options);
 
-　// 得られたレスポンスが、カレンダーのソースか[class=".eventlist"]で判断、ある場合はその入れ子であるHTMLソースを返す
+  // 得られたレスポンスが、カレンダーのソースか[class=".eventlist"]で判断、ある場合はその入れ子であるHTMLソースを返す
   data = response.getContentText("UTF-8");
   $ = Cheerio.load(data);
   if ($('.eventlist').html()) {return $('.eventlist').html();} 

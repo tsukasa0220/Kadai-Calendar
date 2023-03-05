@@ -4,31 +4,27 @@
     <meta charset="UTF-8">
     <title>Kadai-Calendar</title>
     <base target="_top">
-    <?!= include('css_primary'); ?>
+    <?!= include('css'); ?>
 </head>
 <body>
 <div role="main">
   <span id="maincontent"></span>
   <div class="my-1 my-sm-5"></div>
 <div class="row justify-content-center">
-<div class="gc-wrap">
-  <div id="inCalendar" class="g-calendar"></div>
-</div>
 <div class="col-xl-6 col-sm-8 ">
 <div class="card">
   <div class="card-block">
-    <h1 class="h2 card-header text-center">Kadai-Calendar</h1>
+    <h1 class="h2 card-header text-center">Kadai-Calendar<div id="version"></div></h1>
     <div class="card-body"><b>
-      <div id="inResponse"><br></div>
+      <div id="inResponse"></div>
       <div class="row justify-content-md-center">
         <div class="col-md-5">
-          <button type="button" id="update_calendar" class="btn btn-primary btn-block mt-3" onclick="update_calendar_web()">カレンダー更新</button>
-          <button type="button" id="logout"          class="btn btn-logout btn-block mt-3"  onclick="logout_web()"　 　　　　>登録解除</button>
+          <button type="button" id="update_calendar" class="btn btn-green btn-block mt-3" onclick="update_calendar_web()">カレンダー更新</button>
+          <button type="button" id="logout"          class="btn btn-red   btn-block mt-3" onclick="logout_web()"　 　　　　>登録解除</button>
         </div>
         <div class="col-md-5">
           <div class="mt-3">
-            <p>※注意書き<br>システムの不具合によって課題が出せなかったなどのトラブルに関しては一切保証できません<br>おねしゃす  by強欲</p>
-            <p id="version">バージョン0.9.5(ベータ版)</p>
+            <p>※注意書き<br>システムの不具合によって課題が出せなかったなどのトラブルに関しては一切保証できません。おねしゃす！<br>リンク先：<a href="https://kadai-moodle.kagawa-u.ac.jp/login/index.php">香川大学Moodle</a></p>
           </div>
         </div>    
       </div>
@@ -37,6 +33,13 @@
 </div>
 </div>
 </div>
+  <div class="gc-wrap">
+    <center>
+      <button type="button" id="btn-Calendar" class="btn btn-block mt-3" onclick="on_calendar_web()">カレンダーの表示</button><br>
+      <p>PCでカレンダーを利用する場合は<a href="https://chrome.google.com/webstore/detail/checker-plus-for-google-c/hkhggnncdpfibdhinjiegagmopldibha?hl=ja">こちら</a>のChrome拡張機能の利用をおすすめします。（推奨）<br>URLがクリックできない場合は右クリックから新しいタブを開いてください。</p><br>
+      <div id="onCalendar" class="g-calendar"></div>
+    </center>
+  </div>
 </div>
 </body>
 <script>
@@ -46,7 +49,8 @@
   // ページ読み込み時の処理結果
   function onload_result(n) {
     document.getElementById('inResponse').innerHTML = `<center><div class="mt-3">学籍番号[${n[0]}]で登録されています</div></center>`;
-    document.getElementById('inCalendar').innerHTML = `<iframe src="https://calendar.google.com/calendar/embed?src=${n[1]}&ctz=Asia%2FTokyo" style="border: 0" width="600" height="500" frameborder="0" scrolling="no"></iframe>`;   
+    document.getElementById('version').innerHTML = `Ver${n[2]}（ベータ版）`;
+  //   document.getElementById('inCalendar').innerHTML = `<iframe src="https://calendar.google.com/calendar/embed?src=${n[1]}&ctz=Asia%2FTokyo" style="border: 0" width="600" height="500" frameborder="0" scrolling="no"></iframe>`;   
   }
 
   // カレンダー更新の処理開始
@@ -74,9 +78,11 @@
     const inResponse = document.getElementById('inResponse');
     if (n[0] == -1) {
       inResponse.innerHTML = `<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>すでに登録が解除されています　ページを更新してください</center></div></div>`;
+    } else if (n[0] == false) {
+      inResponse.innerHTML = `<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>アクセスエラー：Moodleにアクセスできません</center></div></div>`;
     } else {
       inResponse.innerHTML = `<center><div class="mt-3 alert-success">${n[0]}個のイベントを追加しました。</div></center>`;
-      document.getElementById('inCalendar').innerHTML = `<iframe src="https://calendar.google.com/calendar/embed?src=${n[1]}&ctz=Asia%2FTokyo" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>`;
+      // document.getElementById('inCalendar').innerHTML = `<iframe src="https://calendar.google.com/calendar/embed?src=${n[1]}&ctz=Asia%2FTokyo" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>`;
     }
     document.getElementById("update_calendar").disabled = false;
     document.getElementById("logout"         ).disabled = false;
@@ -92,6 +98,15 @@
     }
     document.getElementById("update_calendar").disabled = false;
     document.getElementById("logout"         ).disabled = false;
+  }
+
+  // カレンダーの表示ボタン
+  function on_calendar_web() {
+    google.script.run.withSuccessHandler(on_calendar_result).onload();
+  }
+
+  function on_calendar_result(n) {
+    document.getElementById('onCalendar').innerHTML = `<iframe src="https://calendar.google.com/calendar/embed?src=${n[1]}&ctz=Asia%2FTokyo" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>`;
   }
 </script>
 </html>

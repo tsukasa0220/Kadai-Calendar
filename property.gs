@@ -2,7 +2,7 @@
 // Parser : 1Mc8BthYthXx6CoIz90-JiSzSafVnT6U3t0z_W3hLTAX5ek4w0G_EIrNw
 
 // バージョン
-const VERSION = '0.9.5';
+const VERSION = '0.9.6';
 
 // MoodleのURL
 const LOGIN_URL = 'https://kadai-moodle.kagawa-u.ac.jp/login/index.php';
