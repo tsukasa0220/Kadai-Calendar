@@ -16,17 +16,18 @@ class CookieUtil {
 
 // moodleへのログイン処理
 function moodle_login(username, password) {
-  let response, cookies, data, $, headers, payload, options, moodleSession;
+  let response, cookies, data, $, headers, payload, options, moodleSession, sesskey;
 
   // ログインページを開く(GET) <200>
   headers = {
     'user-agent': USER_AGENT,
   }
   options = {
+    'method': 'get',
     'headers': headers,
     'muteHttpExceptions': true,
-    "validateHttpsCertificates" : false,
-    "followRedirects" : false,
+    'validateHttpsCertificates' : false,
+    'followRedirects' : false,
   }
   try {
     response = UrlFetchApp.fetch(LOGIN_URL, options);
@@ -64,6 +65,7 @@ function moodle_login(username, password) {
     'method': 'post',
     'headers': headers,
     'payload': payload,
+    'validateHttpsCertificates' : false,
     'followRedirects': false,
   }
   response = UrlFetchApp.fetch(LOGIN_URL, options);
@@ -92,13 +94,38 @@ function moodle_login(username, password) {
   options = {
     'method': 'get',
     'headers': headers,
+    'validateHttpsCertificates' : false,
+    'followRedirects': false,
   }
   response = UrlFetchApp.fetch(CALENDAR_URL, options);
 
-  // 得られたレスポンスが、カレンダーのソースか[class=".eventlist"]で判断、ある場合はその入れ子であるHTMLソースを返す
+　// 得られたレスポンスが、カレンダーのソースか[class=".eventlist"]で判断、ある場合はその入れ子であるHTMLソースを返す
   data = response.getContentText("UTF-8");
   $ = Cheerio.load(data);
+
+  // ログアウトkeyを取得
+  sesskey = parse_one(data, '"sesskey":"', '",');
+
+  Utilities.sleep(300);
+
+  // ログアウトする <303>
+  headers = {
+    'cookie': moodleSession,
+    'user-agent': USER_AGENT,
+  }
+  payload = {
+    'sesskey': sesskey,
+  }
+  options = {
+    'method': 'get',
+    'headers': headers,
+    'payload': payload,
+    'validateHttpsCertificates' : false,
+    'followRedirects' : false,
+  }
+  response = UrlFetchApp.fetch(LOGOUT_URL, options);
+
   if ($('.eventlist').html()) {return $('.eventlist').html();} 
-  Logger.log("失敗[003]");
+  Logger.log("取得失敗");
   return false;
 }

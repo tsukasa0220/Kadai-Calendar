@@ -76,10 +76,12 @@
   // カレンダー更新の処理結果
   function update_calendar_result(n){
     const inResponse = document.getElementById('inResponse');
-    if (n[0] == -1) {
+    if (n[0] === -1) {
       inResponse.innerHTML = `<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>すでに登録が解除されています　ページを更新してください</center></div></div>`;
-    } else if (n[0] == false) {
+    } else if (n[0] === false) {
       inResponse.innerHTML = `<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>アクセスエラー：Moodleにアクセスできません</center></div></div>`;
+    } else if (n[0] === 0) {
+      inResponse.innerHTML = `<center><div class="mt-3 alert-success">追加するイベントはありません。</div></center>`;
     } else {
       inResponse.innerHTML = `<center><div class="mt-3 alert-success">${n[0]}個のイベントを追加しました。</div></center>`;
       // document.getElementById('inCalendar').innerHTML = `<iframe src="https://calendar.google.com/calendar/embed?src=${n[1]}&ctz=Asia%2FTokyo" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>`;
@@ -91,7 +93,7 @@
   // ログアウトの処理結果
   function logout_result(n) {
     const inResponse = document.getElementById('inResponse');
-    if (n == -1) {
+    if (n === -1) {
       inResponse.innerHTML = `<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>すでに登録が解除されています　ページを更新してください</center></div></div>`;
     } else {
       inResponse.innerHTML = `<center><div class="mt-3 alert-success">登録を解除しました　ページを更新してください</div></center>`;
