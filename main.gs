@@ -1,4 +1,7 @@
+// メイン関数
 function main (username, password) {
+  Logger.log(`学籍番号:${username}`);
+  
   // moodle.gsでログイン処理を行う
   const eventHtml = moodle_login(username, password);
   if (eventHtml == false) {return false;}
@@ -12,13 +15,10 @@ function main (username, password) {
   return addEventNumber;
 }
 
-// 変更注意
+// カレンダー自動更新のための関数
 function auto_update_main() {
   const userProperties = PropertiesService.getUserProperties();
   const add = main(userProperties.getProperty('username'), userProperties.getProperty('password'));
-  if (add === false) {
-    Logger.log("アクセスエラー");
-  } else {
-    Logger.log(add);
-  }
+  if (add === false) {Logger.log("アクセスエラー");} 
+  else {Logger.log(add);}
 }

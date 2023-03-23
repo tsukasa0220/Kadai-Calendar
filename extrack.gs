@@ -20,7 +20,7 @@ function parse_one(html, start, end) {
 // １つに統合
 function conbine(title, component, eventtype, courseid, eventlink, description, eventtime, subject) {
   return `<h2><font color="darkorange">Kadai-Calendar </font><font color="#9acd32">Ver${VERSION}</font></h2><br>` + 
-　　　　　 `<h4><font color="#9acd32">★</font> <font color="#ff8c00">${event_link(component, eventlink)}</font></h4><br>` + 
+         `<h4><font color="#9acd32">★</font> <font color="#ff8c00">${event_link(component, eventlink)}</font></h4><br>` + 
          `<b><font color="#add8e6">============================</font></b><br>` + 
          `<font color="#9acd32">■</font>${event_type(eventtype)}：${time_change(eventtime)}<br>` + 
          `<font color="#9acd32">■</font>時間割名：<font color="#ff8c00"><a href="https://kadai-moodle.kagawa-u.ac.jp/course/view.php?id=${courseid}">${subject}</a></font><br>` +
@@ -28,7 +28,8 @@ function conbine(title, component, eventtype, courseid, eventlink, description, 
          `${title}<br>` + 
          `${descript_orNull(description)}<br>` + 
          `<font color="#9acd32">■</font>更新日時：${time_change(new Date())}<br>` + 
-         `<b><font color="#add8e6">============================</font></b><br>`;
+         `<b><font color="#add8e6">============================</font></b><br>` +
+         `<font color="#9acd32">●</font><font color="#ff8c00"><a href="localhost">Kadai-Calendar</a></font>`; // 後にURL指定しておく
 
   // dateObjを{mm月dd日(day of week)hh時mm分}に変換
   function  time_change(dateObj){

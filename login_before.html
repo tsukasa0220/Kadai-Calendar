@@ -14,7 +14,9 @@
   <div class="card-block">
     <h1 class="h2 card-header text-center">Kadai-Calendar<div id="version"></div></h1>
     <div class="card-body"><b>
-      <div id="inResponse"><br></div>
+      <center>
+        <div id="inResponse" class="mt-3">　</div>
+      </center>
       <div class="row justify-content-md-center">
         <div class="col-md-5">
           <form class="mt-3" name="form" id="form">
@@ -26,7 +28,7 @@
               <label for="password" class="sr-only">パスワード</label>
               <input type="password" name="password" id="password" value="" class="form-control" placeholder="パスワード" autocomplete="current-password">
             </div>
-            <button type="button" id="login" class="btn btn-green btn-block mt-3" onclick="login_web()">ログイン</button>
+            <button type="button" id="login" class="btn btn-green btn-block mt-3" onclick="login_web()">登録</button>
           </form>
         </div>
         <div class="col-md-5">
@@ -47,7 +49,7 @@
     document.getElementById("username").disabled = true;
     document.getElementById("password").disabled = true;
     document.getElementById("login"   ).disabled = true;
-    document.getElementById('inResponse').innerHTML = '<center><div class="mt-3">処理中...</div></center>';
+    document.getElementById('inResponse').innerHTML = '<div class="mt-3">Kadai-Calendarに登録中...（推定10秒）</div>';
     const username = document.form.username.value;
     const password = document.form.password.value;
     google.script.run.withSuccessHandler(login_result).login(username, password);
@@ -57,11 +59,11 @@
   function login_result(n){
     const inResponse = document.getElementById('inResponse');
     if (n === -1) {
-      inResponse.innerHTML = '<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>すでに登録が完了しています　ページを更新してください</center></div></div>';
+      inResponse.innerHTML = '<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true">すでに登録が完了しています　ページを更新してください</div></div>';
     } else if (n) {
-      inResponse.innerHTML = '<center><div class="mt-3 alert-success">登録されました　ページを更新してください</div></center>';
+      inResponse.innerHTML = '<div class="mt-3 alert-success">登録されました　ページを更新してください（F5を押してください）</div>';
     } else {
-      inResponse.innerHTML = '<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true"><center>Moodleにアクセスできないか、ユーザ名またはパスワードが間違っています</center></div></div>';
+      inResponse.innerHTML = '<div id="error" class="loginerrors mt-3"><div class="alert alert-danger" role="alert" data-aria-autofocus="true">Moodleにアクセスできないか、ユーザ名またはパスワードが間違っています</div></div>';
     }
     document.getElementById("username").disabled = false;
     document.getElementById("password").disabled = false;

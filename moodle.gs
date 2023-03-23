@@ -99,7 +99,7 @@ function moodle_login(username, password) {
   }
   response = UrlFetchApp.fetch(CALENDAR_URL, options);
 
-　// 得られたレスポンスが、カレンダーのソースか[class=".eventlist"]で判断、ある場合はその入れ子であるHTMLソースを返す
+  // 得られたレスポンスが、カレンダーのソースか[class=".eventlist"]で判断、ある場合はその入れ子であるHTMLソースを返す
   data = response.getContentText("UTF-8");
   $ = Cheerio.load(data);
 

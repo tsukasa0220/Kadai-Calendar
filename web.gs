@@ -13,15 +13,6 @@ function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
-// function redirect() {
-//   const userProperties = PropertiesService.getUserProperties();
-//   let website = 'login_before';
-//   if (userProperties.getProperty('auth')) {
-//     website = 'login_after';
-//   }
-//   return HtmlService.createTemplateFromFile(website).evaluate().setTitle('Kadai-Calendar');
-// }
-
 // 登録したユーザ名、カレンダー、バージョンの表示
 function onload() {
   const userProperties = PropertiesService.getUserProperties();
@@ -47,6 +38,7 @@ function login(username, password) {
 
     ScriptApp.newTrigger('auto_update_main').timeBased().everyHours(1).create();
     ScriptApp.newTrigger('logout').timeBased().atDate(2023, 3, 31).create();
+    Logger.log(`学籍番号[${username}]登録完了`);
     return true;
   } else {
     return false;
@@ -66,6 +58,7 @@ function update_calendar() {
 function logout() {
   const userProperties = PropertiesService.getUserProperties();
   if (!userProperties.getProperty('auth')) {return -1}
+  Logger.log(`学籍番号[${userProperties.getProperty('username')}]登録解除`);
   const calendar = CalendarApp.getCalendarById(userProperties.getProperty('calendarId'));
   if (calendar) {
     calendar.deleteCalendar();

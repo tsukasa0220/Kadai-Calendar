@@ -13,18 +13,17 @@
         "version": "7"
       }
     ],
-    "enabledAdvancedServices": [
-      {
-        "userSymbol": "Calendar",
-        "version": "v3",
-        "serviceId": "calendar"
-      }
-    ]
+    "enabledAdvancedServices": []
   },
   "webapp": {
     "executeAs": "USER_ACCESSING",
     "access": "ANYONE"
   },
   "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/script.scriptapp",
+    "https://www.googleapis.com/auth/calendar"
+  ]
 }
