@@ -1,11 +1,6 @@
 // HTMLファイルの読み込み
 function doGet() {
-  const userProperties = PropertiesService.getUserProperties();
-  let website = 'login_before';
-  if (userProperties.getProperty('auth')) {
-    website = 'login_after';
-  }
-  return HtmlService.createTemplateFromFile(website).evaluate().setTitle('Kadai-Calendar');
+  return HtmlService.createTemplateFromFile('index').evaluate().setTitle('Kadai-Calendar');
 }
 
 // CSSファイルの読み込み
@@ -13,13 +8,16 @@ function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
-// 登録したユーザ名、カレンダー、バージョンの表示
+
 function onload() {
   const userProperties = PropertiesService.getUserProperties();
-  return [userProperties.getProperty('username'), userProperties.getProperty('calendarId'), VERSION];
+  if (userProperties.getProperty('auth')) {
+    return [true, userProperties.getProperty('username')];
+  }
+  return false;
 }
 
-// ログイン（初期登録）処理
+// 登録処理
 function login(username, password) {
   const userProperties = PropertiesService.getUserProperties();
   if (userProperties.getProperty('auth')) {
@@ -37,7 +35,7 @@ function login(username, password) {
     userProperties.setProperty('calendarId', calendar.getId());
 
     ScriptApp.newTrigger('auto_update_main').timeBased().everyHours(1).create();
-    ScriptApp.newTrigger('logout').timeBased().atDate(2023, 3, 31).create();
+    ScriptApp.newTrigger('logout').timeBased().atDate(2024, 3, 31).create();
     Logger.log(`学籍番号[${username}]登録完了`);
     return true;
   } else {
@@ -54,7 +52,7 @@ function update_calendar() {
   return [main(username, password), userProperties.getProperty('calendarId')];
 }
 
-// ログアウト（登録解除）処理
+// 登録解除処理
 function logout() {
   const userProperties = PropertiesService.getUserProperties();
   if (!userProperties.getProperty('auth')) {return -1}

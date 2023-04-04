@@ -29,7 +29,7 @@ function conbine(title, component, eventtype, courseid, eventlink, description, 
          `${descript_orNull(description)}<br>` + 
          `<font color="#9acd32">■</font>更新日時：${time_change(new Date())}<br>` + 
          `<b><font color="#add8e6">============================</font></b><br>` +
-         `<font color="#9acd32">●</font><font color="#ff8c00"><a href="localhost">Kadai-Calendar</a></font>`; // 後にURL指定しておく
+         `<font color="#9acd32">●</font>Webアプリ：<font color="#ff8c00"><a href="localhost">Kadai-Calendar</a></font>`; // 後にURL指定しておく
 
   // dateObjを{mm月dd日(day of week)hh時mm分}に変換
   function  time_change(dateObj){
@@ -66,11 +66,12 @@ function conbine(title, component, eventtype, courseid, eventlink, description, 
   // 活動先のリンク先を作成
   function event_link (component, eventlink) {
     switch (component) {
+      case ''                 : return 'o(*^▽^*)o わーい';
       case 'mod_assign'       : return `<a href="${eventlink}">提出物をアップロードする</a>`;
       case 'mod_attendance'   : return `<a href="${eventlink}">出席登録を行う</a>`;
       case 'mod_questionnaire': return `<a href="${eventlink}">アンケートに回答する</a>`;
       case 'mod_quiz'         : return `<a href="${eventlink}">テストを受験する</a>`;
-      default                 : return `<a href="${eventlink}">活動に移動する/a>`;
+      default                 : return `<a href="${eventlink}">活動に移動する</a>`;
     }
   }
 }

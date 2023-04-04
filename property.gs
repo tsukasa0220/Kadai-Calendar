@@ -5,13 +5,21 @@
 const DEBUG = false;
 
 // バージョン
-const VERSION = '0.9.9';
+const VERSION = '0.9.10';
 
 // MoodleのURL
 const UNIV = {kagawa:'kadai-moodle.kagawa-u.ac.jp'};
 
+// Moodleのカレンダーの取得範囲
+const CALENDAR_TIME = '?view=upcoming&course=1';
+
+// googleカレンダーの取得範囲
+const START_TIME = -7;
+const END_TIME = 31;
+
+// アクセスするMoodleのURL
 const LOGIN_URL    = `https://${UNIV.kagawa}/login/index.php`;
-const CALENDAR_URL = `https://${UNIV.kagawa}/calendar/view.php?view=upcoming&course=1`;
+const CALENDAR_URL = `https://${UNIV.kagawa}/calendar/view.php${CALENDAR_TIME}`;
 const LOGOUT_URL   = `https://${UNIV.kagawa}/login/logout.php`;
 
 // ブラウザのユーザエージェントを指定 → 追記：できないっぽい

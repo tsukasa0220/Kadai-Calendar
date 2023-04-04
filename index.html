@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Kadai-Calendar</title>
+    <base target="_top">
+    <?!= include('css'); ?>
+</head>
+<body>
+  <div role="main">
+    <span id="maincontent"></span>
+    <div class="my-1 my-sm-5"></div>
+    <div class="col-xl-6 col-sm-8 ">
+      <div class="card"><b>
+        <div class="card-block">
+          <h1 class="h2 card-header text-center">Kadai-Calendar</h1>
+          <div class="card-body">
+            <center>
+              <div id="inResponse" class="mt-3">読み込み中...</div>
+            </center>
+          </div>
+          <div class="col-md-12">
+            <div id="main"></div>
+            <div class="mt-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  // ページ読み込み時の処理開始
+  window.onload = function() {google.script.run.withSuccessHandler(onload_result).onload();}
+
+  // ページ読み込み時の処理結果
+  function onload_result(auth) {
+    const Incard = document.getElementById('main');
+    const InResponse = document.getElementById('inResponse');
+    if (auth[0]) {
+      Incard.innerHTML =
+     `<button type="button" id="update_calendar" class="btn btn-green btn-block mt-3" onclick="update_calendar_web()">カレンダー更新</button>
+      <button type="button" id="logout"          class="btn btn-red   btn-block mt-3" onclick="logout_web()"         >登録解除</button>`;
+      InResponse.innerHTML = `学籍番号[${auth[1]}]で登録済み`;
+    } else {
+      Incard.innerHTML = 
+     `<form class="mt-3" name="form" id="form">
+        <div class="form-group">
+          <label for="username" class="sr-only">ユーザ名</label>
+          <input type="text" name="username" id="username" class="form-control" value="" placeholder="ユーザ名" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="password" class="sr-only">パスワード</label>
+          <input type="password" name="password" id="password" value="" class="form-control" placeholder="パスワード" autocomplete="current-password">
+        </div>
+        <button type="button" id="login" class="btn btn-green btn-block mt-3" onclick="login_web()">登録</button>
+      </form>`;
+      InResponse.innerHTML = `未登録`;
+    }
+  }
+
+  // 登録処理開始
+  function login_web() {
+    document.getElementById("username").disabled = true;
+    document.getElementById("password").disabled = true;
+    document.getElementById("login"   ).disabled = true;
+    document.getElementById('inResponse').innerHTML = 'Kadai-Calendarに登録中...（推定10秒）';
+    const username = document.form.username.value;
+    const password = document.form.password.value;
+    google.script.run.withSuccessHandler(login_result).login(username, password);
+  }
+
+  // 登録処理結果
+  function login_result(n){
+    const inResponse = document.getElementById('inResponse');
+    if (n === -1) {
+      inResponse.innerHTML = '<div id="error" class="loginerrors"><div class="alert alert-danger" role="alert" data-aria-autofocus="true">システムエラー</div></div>';
+      document.getElementById("username").disabled = false;
+      document.getElementById("password").disabled = false;
+      document.getElementById("login"   ).disabled = false;
+    } else if (n) {
+      inResponse.innerHTML = '<div class="alert-success">登録されました</div>';
+      google.script.run.withSuccessHandler(onload_result).onload();
+    } else {
+      inResponse.innerHTML = '<div id="error" class="loginerrors"><div class="alert alert-danger" role="alert" data-aria-autofocus="true">ユーザ名またはパスワードが間違っています</div></div>';
+      document.getElementById("username").disabled = false;
+      document.getElementById("password").disabled = false;
+      document.getElementById("login"   ).disabled = false;
+    }
+  } 
+
+  // カレンダー更新の処理開始
+  function update_calendar_web() {
+    document.getElementById("update_calendar").disabled = true;
+    document.getElementById("logout"         ).disabled = true;
+    document.getElementById('inResponse').innerHTML = `カレンダーを更新中...`;
+    google.script.run.withSuccessHandler(update_calendar_result).update_calendar();
+  }
+
+  // ログアウト処理開始
+  function logout_web() {
+    if (confirm("登録を解除しますか？")) {
+      document.getElementById("update_calendar").disabled = true;
+      document.getElementById("logout"         ).disabled = true;
+      document.getElementById('inResponse').innerHTML = `Kadai-Calendarの登録解除中...`;
+      google.script.run.withSuccessHandler(logout_result).logout();
+    }    
+  }
+
+  // カレンダー更新の処理結果
+  function update_calendar_result(n){
+    const inResponse = document.getElementById('inResponse');
+    if (n[0] === -1) {
+      inResponse.innerHTML = `<div id="error" class="loginerrors"><div class="alert alert-danger" role="alert" data-aria-autofocus="true">システムエラー</div></div>`;
+    } else if (n[0] === false) {
+      inResponse.innerHTML = `<div id="error" class="loginerrors"><div class="alert alert-danger" role="alert" data-aria-autofocus="true">Moodleにアクセスできません</div></div>`;
+    } else if (n[0] === 0) {
+      inResponse.innerHTML = `<div class="alert-success">追加するイベントはありません</div>`;
+    } else {
+      inResponse.innerHTML = `<div class="alert-success">${n[0]}個のイベントを追加しました</div>`;
+    }
+    document.getElementById("update_calendar").disabled = false;
+    document.getElementById("logout"         ).disabled = false;
+  }
+
+  // ログアウトの処理結果
+  function logout_result(n) {
+    const inResponse = document.getElementById('inResponse');
+    if (n === -1) {
+      inResponse.innerHTML = `<div id="error" class="loginerrors"><div class="alert alert-danger" role="alert" data-aria-autofocus="true">システムエラー</div></div>`;
+    } else {
+      inResponse.innerHTML = `<div class="alert-success">登録を解除しました</div>`;
+      google.script.run.withSuccessHandler(onload_result).onload();
+    }
+  }
+</script>
+</html>

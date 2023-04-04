@@ -1,6 +1,3 @@
-const START_TIME = -7;
-const END_TIME = 31;
-
 // メイン関数
 function calendar(eventsObj) {
   // Kadai-Calendar[s20t000]をGoogleカレンダーのリストから探索
