@@ -18,10 +18,14 @@ class CookieUtil {
 function moodle_login(username, password) {
   let response, cookies, data, $, headers, payload, options, moodleSession, sesskey;
 
+  // スクリプトプロパティを取得
+  let scriptProperties = PropertiesService.getScriptProperties();
+  let url_login =    scriptProperties.getProperty('KAGAWA_URL_LOGIN');
+  let url_calendar = scriptProperties.getProperty('KAGAWA_URL_CALENDAR') + scriptProperties.getProperty('MOODLE_CALENDAR_TIME');
+  let url_logout =   scriptProperties.getProperty('KAGAWA_URL_LOGOUT');
+
   // ログインページを開く(GET) <200>
-  headers = {
-    'user-agent': USER_AGENT,
-  }
+  headers = {}
   options = {
     'method': 'get',
     'headers': headers,
@@ -30,9 +34,9 @@ function moodle_login(username, password) {
     'followRedirects' : false,
   }
   try {
-    response = UrlFetchApp.fetch(LOGIN_URL, options);
+    response = UrlFetchApp.fetch(url_login, options);
   } catch(e) {
-    Logger.log("Error:" + e);
+    Logger.log("エラー:" + e);
     return false;
   }
 
@@ -54,7 +58,6 @@ function moodle_login(username, password) {
   // ログインフォーム送信(POST) <303>
   headers = {
     'cookie': moodleSession,
-    'user-agent': USER_AGENT,
   }
   payload = {
     'logintoken': logintoken,
@@ -68,13 +71,13 @@ function moodle_login(username, password) {
     'validateHttpsCertificates' : false,
     'followRedirects': false,
   }
-  response = UrlFetchApp.fetch(LOGIN_URL, options);
+  response = UrlFetchApp.fetch(url_login, options);
 
   // MoodleSessionを取得し次のリクエストにセット
   // Set-cookieが複数あるため，キーが”MoodleSession”の値を取り出す
   cookies = response.getAllHeaders()["Set-Cookie"];
   for (const c in cookies) {
-    const cookie = cookies[c]
+    const cookie = cookies[c];
     if (CookieUtil.getValue(cookie, 'MoodleSession')) {
       moodleSession = CookieUtil.getValue(cookie, 'MoodleSession');
     }
@@ -89,7 +92,6 @@ function moodle_login(username, password) {
   // 直近イベントのカレンダーのページ(GET) <200>
   headers = {
     'cookie': moodleSession,
-    'user-agent': USER_AGENT,
   }
   options = {
     'method': 'get',
@@ -97,7 +99,7 @@ function moodle_login(username, password) {
     'validateHttpsCertificates' : false,
     'followRedirects': false,
   }
-  response = UrlFetchApp.fetch(CALENDAR_URL, options);
+  response = UrlFetchApp.fetch(url_calendar, options);
 
   // 得られたレスポンスが、カレンダーのソースか[class=".eventlist"]で判断、ある場合はその入れ子であるHTMLソースを返す
   data = response.getContentText("UTF-8");
@@ -111,7 +113,6 @@ function moodle_login(username, password) {
   // ログアウトする <303>
   headers = {
     'cookie': moodleSession,
-    'user-agent': USER_AGENT,
   }
   payload = {
     'sesskey': sesskey,
@@ -123,9 +124,11 @@ function moodle_login(username, password) {
     'validateHttpsCertificates' : false,
     'followRedirects' : false,
   }
-  response = UrlFetchApp.fetch(LOGOUT_URL, options);
+  response = UrlFetchApp.fetch(url_logout, options);
 
-  if ($('.eventlist').html()) {return $('.eventlist').html();} 
+  if ($('.eventlist').html()) {
+    return $('.eventlist').html();
+  } 
   Logger.log("取得失敗");
   return false;
 }

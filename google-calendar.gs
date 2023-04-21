@@ -30,13 +30,18 @@ function calendar(eventsObj) {
 
   // Kadai-Calendar[s20t000]内にあるイベントを取得
   function get_event(myCalendarObj) {
+    // スクリプトプロパティの取得
+    let scriptProperties = PropertiesService.getScriptProperties();
+    let time_start = parseInt(scriptProperties.getProperty('GOOGLE_CALENDAR_TIME_START'));
+    let time_end   = parseInt(scriptProperties.getProperty('GOOGLE_CALENDAR_TIME_END'));
+
     // イベントの開始日の範囲を指定（現在＋START_TIME）
     let startDate = new Date();
-    startDate.setDate(startDate.getDate() + START_TIME);
+    startDate.setDate(startDate.getDate() - 31);
 
     // イベントの終了日の範囲を指定（現在＋END_TIME）
     let endDate = new Date();
-    endDate.setDate(endDate.getDate() + END_TIME);
+    endDate.setDate(endDate.getDate() + time_end);
 
     // 開始日～終了日の範囲に存在するイベントを取得
     let myEventsObj = myCalendarObj.getEvents(startDate, endDate);

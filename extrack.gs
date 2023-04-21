@@ -1,81 +1,3 @@
-// タグを抽出
-function cheerio($, className, option, val) {
-  const tmp = [];
-  $(className).each((i, elem) => {  
-    if      (option == 'attr') {tmp[i] = $(elem).attr(val)} 
-    else if (option == 'text') {tmp[i] = $(elem).text()   }
-    else                       {tmp[i] = $(elem).html()   }
-  });
-  return tmp;
-}
-
-// 文字列をパースする 
-function parse(html, start, end) {
-  return Parser.data(html).from(start).to(end).iterate(); // 配列 
-}
-function parse_one(html, start, end) {
-  return Parser.data(html).from(start).to(end).build(); //単体
-}
-
-// １つに統合
-function conbine(title, component, eventtype, courseid, eventlink, description, eventtime, subject) {
-  return `<h2><font color="darkorange">Kadai-Calendar </font><font color="#9acd32">Ver${VERSION}</font></h2><br>` + 
-         `<h4><font color="#9acd32">★</font> <font color="#ff8c00">${event_link(component, eventlink)}</font></h4><br>` + 
-         `<b><font color="#add8e6">============================</font></b><br>` + 
-         `<font color="#9acd32">■</font>${event_type(eventtype)}：${time_change(eventtime)}<br>` + 
-         `<font color="#9acd32">■</font>時間割名：<font color="#ff8c00"><a href="https://kadai-moodle.kagawa-u.ac.jp/course/view.php?id=${courseid}">${subject}</a></font><br>` +
-         `<font color="#9acd32">■</font>概要<br>` + 
-         `${title}<br>` + 
-         `${descript_orNull(description)}<br>` + 
-         `<font color="#9acd32">■</font>更新日時：${time_change(new Date())}<br>` + 
-         `<b><font color="#add8e6">============================</font></b><br>` +
-         `<font color="#9acd32">●</font>Webアプリ：<font color="#ff8c00"><a href="localhost">Kadai-Calendar</a></font>`; // 後にURL指定しておく
-
-  // dateObjを{mm月dd日(day of week)hh時mm分}に変換
-  function  time_change(dateObj){
-    let text = '';
-    let aryWeek = ['日', '月', '火', '水', '木', '金', '土'];
-    text = /*dateObj.getFullYear() + '年' + */ 
-        (dateObj.getMonth() + 1) + '月' + 
-        dateObj.getDate() + '日' + 
-        '(' + aryWeek[dateObj.getDay()] + ')' + 
-        dateObj.getHours() + '時' + 
-        dateObj.getMinutes() + '分' /*+ 
-        dateObj.getSeconds() + '秒'*/; 
-    return text;
-  }
-
-  // 本文があるかないか判別
-  function descript_orNull(description) {
-    let text = "";
-    if (String(description)) {text = `<br><font color="#9acd32">■</font>本文(プレビュー版)<br>${description}<br>`}
-    return text;
-  }
-
-  // イベントの種類（時間用）を日本語化
-  function event_type (eventtype) {
-    switch (eventtype) {
-      case 'open'       : return "開始日時";
-      case 'close'      : return "終了日時";
-      case 'due'        : return "提出期限";
-      case 'attendance' : return "出席期限";
-      default           : return "活動日時";
-    }
-  }
-
-  // 活動先のリンク先を作成
-  function event_link (component, eventlink) {
-    switch (component) {
-      case ''                 : return 'o(*^▽^*)o わーい';
-      case 'mod_assign'       : return `<a href="${eventlink}">提出物をアップロードする</a>`;
-      case 'mod_attendance'   : return `<a href="${eventlink}">出席登録を行う</a>`;
-      case 'mod_questionnaire': return `<a href="${eventlink}">アンケートに回答する</a>`;
-      case 'mod_quiz'         : return `<a href="${eventlink}">テストを受験する</a>`;
-      default                 : return `<a href="${eventlink}">活動に移動する</a>`;
-    }
-  }
-}
-
 // メイン関数
 function extrack(eventHtml) {
   // eventHtmlをCheeioに渡す
@@ -135,5 +57,81 @@ function extrack(eventHtml) {
     else if (timeMinute <= 980)  {return 4;} 
     else if (timeMinute <= 1080) {return 5;} 
     else{return 0;}
+  }
+}
+
+// １つに統合
+function conbine(title, component, eventtype, courseid, eventlink, description, eventtime, subject) {
+  return `<h2><font color="darkorange">Kadai-Calendar </font><font color="#9acd32">Ver${version()}</font></h2><br>` + 
+         `<h4><font color="#9acd32">★</font> <font color="#ff8c00">${event_link(component, eventlink)}</font></h4><br>` + 
+         `<b><font color="#add8e6">============================</font></b><br>` + 
+         `<font color="#9acd32">■</font>${event_type(eventtype)}：${time_change(eventtime)}<br>` + 
+         `<font color="#9acd32">■</font>時間割名：<font color="#ff8c00"><a href="https://kadai-moodle.kagawa-u.ac.jp/course/view.php?id=${courseid}">${subject}</a></font><br>` +
+         `<font color="#9acd32">■</font>概要<br>` + 
+         `${title}<br>` + 
+         `${descript_orNull(description)}<br>` + 
+         `<font color="#9acd32">■</font>更新日時：${time_change(new Date())}<br>` + 
+         `<b><font color="#add8e6">============================</font></b><br>` +
+         `<font color="#9acd32">●</font>Webアプリ：<font color="#ff8c00"><a href="https://kadai-calendar.com">Kadai-Calendar</a></font><br>` + 
+         `${notice()}`;
+
+  // バージョン
+  function version() {
+    let scriptProperties = PropertiesService.getScriptProperties();
+    return scriptProperties.getProperty('VERSION');
+  }
+
+  // お知らせ
+  function notice() {
+    let scriptProperties = PropertiesService.getScriptProperties();
+    if (scriptProperties.getProperty('NOTICE')) {
+      return `<font color="#9acd32">●</font>お知らせ<br>${scriptProperties.getProperty('NOTICE')}`;
+    }
+    return '';
+    
+  }
+
+  // dateObjを{mm月dd日(day of week)hh時mm分}に変換
+  function  time_change(dateObj){
+    let text = '';
+    let aryWeek = ['日', '月', '火', '水', '木', '金', '土'];
+    text = /*dateObj.getFullYear() + '年' + */ 
+        (dateObj.getMonth() + 1) + '月' + 
+        dateObj.getDate() + '日' + 
+        '(' + aryWeek[dateObj.getDay()] + ')' + 
+        dateObj.getHours() + '時' + 
+        dateObj.getMinutes() + '分' /*+ 
+        dateObj.getSeconds() + '秒'*/; 
+    return text;
+  }
+
+  // 本文があるかないか判別
+  function descript_orNull(description) {
+    let text = "";
+    if (String(description)) {text = `<br><font color="#9acd32">■</font>本文(プレビュー版)<br>${description}<br>`}
+    return text;
+  }
+
+  // イベントの種類（時間用）を日本語化
+  function event_type (eventtype) {
+    switch (eventtype) {
+      case 'open'       : return "開始日時";
+      case 'close'      : return "終了日時";
+      case 'due'        : return "提出期限";
+      case 'attendance' : return "出席期限";
+      default           : return "活動日時";
+    }
+  }
+
+  // 活動先のリンク先を作成
+  function event_link (component, eventlink) {
+    switch (component) {
+      case ''                 : return 'o(*^▽^*)o わーい';
+      case 'mod_assign'       : return `<a href="${eventlink}">提出物をアップロードする</a>`;
+      case 'mod_attendance'   : return `<a href="${eventlink}">出席登録を行う</a>`;
+      case 'mod_questionnaire': return `<a href="${eventlink}">アンケートに回答する</a>`;
+      case 'mod_quiz'         : return `<a href="${eventlink}">テストを受験する</a>`;
+      default                 : return `<a href="${eventlink}">活動に移動する</a>`;
+    }
   }
 }

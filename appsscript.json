@@ -1,5 +1,7 @@
 {
   "timeZone": "Asia/Tokyo",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
   "dependencies": {
     "libraries": [
       {
@@ -12,18 +14,15 @@
         "libraryId": "1Mc8BthYthXx6CoIz90-JiSzSafVnT6U3t0z_W3hLTAX5ek4w0G_EIrNw",
         "version": "7"
       }
-    ],
-    "enabledAdvancedServices": []
+    ]
   },
-  "webapp": {
-    "executeAs": "USER_ACCESSING",
-    "access": "ANYONE"
-  },
-  "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8",
   "oauthScopes": [
     "https://www.googleapis.com/auth/script.external_request",
     "https://www.googleapis.com/auth/script.scriptapp",
     "https://www.googleapis.com/auth/calendar"
-  ]
+  ],
+  "webapp": {
+    "executeAs": "USER_ACCESSING",
+    "access": "ANYONE"
+  }
 }
