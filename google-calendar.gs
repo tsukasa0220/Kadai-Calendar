@@ -99,6 +99,7 @@ function calendar(eventsObj) {
         case 'mod_attendance'   : newEvent.setColor(10); break;
         case 'mod_quiz'         : newEvent.setColor(5);  break;
         case 'mod_questionnaire': newEvent.setColor(8);  break;
+        case 'mod_choice'       : newEvent.setColor(9);  break;
         default                 : newEvent.setColor(7);  break;
       }
     }

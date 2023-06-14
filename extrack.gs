@@ -37,6 +37,7 @@ function extrack(eventHtml) {
                                 classNum[i] = start_attendance(eventtime[i]); break;
       case 'mod_questionnaire': subjectTitle[i] = "アンケート：" + subject[i];  break;
       case 'mod_quiz'         : subjectTitle[i] = "テスト：" + subject[i];     break;
+      case 'mod_choice'       : subjectTitle[i] = "投票：" + subject[i];       break;
       default                 : subjectTitle[i] = "活動：" + subject[i];       break;
     }
 
@@ -131,6 +132,7 @@ function conbine(title, component, eventtype, courseid, eventlink, description, 
       case 'mod_attendance'   : return `<a href="${eventlink}">出席登録を行う</a>`;
       case 'mod_questionnaire': return `<a href="${eventlink}">アンケートに回答する</a>`;
       case 'mod_quiz'         : return `<a href="${eventlink}">テストを受験する</a>`;
+      case 'mod_choice'       : return `<a href="${eventlink}">投票を行う</a>`;
       default                 : return `<a href="${eventlink}">活動に移動する</a>`;
     }
   }
