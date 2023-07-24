@@ -1,6 +1,6 @@
 // HTMLファイルの読み込み
 function doGet() {
-  return HtmlService.createHtmlOutputFromFile('index').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  return HtmlService.createHtmlOutputFromFile('index').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL).addMetaTag('viewport', 'width=device-width, initial-scale=1').setTitle("Kadai-Calendar(GAS)");
 }
 
 // CSSファイルの読み込み

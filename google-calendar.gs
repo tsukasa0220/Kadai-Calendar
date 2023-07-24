@@ -37,7 +37,7 @@ function calendar(eventsObj) {
 
     // イベントの開始日の範囲を指定（現在＋START_TIME）
     let startDate = new Date();
-    startDate.setDate(startDate.getDate() - 31);
+    startDate.setDate(startDate.getDate() + time_start);
 
     // イベントの終了日の範囲を指定（現在＋END_TIME）
     let endDate = new Date();
@@ -53,6 +53,7 @@ function calendar(eventsObj) {
   // Kadai-Calendar[s20t000]に新しいイベント追加, 追加したイベントの数を返却
   function set_event(myCalendarObj, eventsObj, myEventsObj) {
     let addEventNumber = 0;
+    let maxDate = new Date();
     for (let i = 0; i < eventsObj.length; i++) {
       let flg = true;
       for (let j = 0; j < myEventsObj.length; j++) {
@@ -69,8 +70,27 @@ function calendar(eventsObj) {
         create_event(eventsObj[i], myCalendarObj);
         addEventNumber++;
       }
+      if (eventsObj[i].eventtime > maxDate) {
+        maxDate = eventsObj[i].eventtime;
+      }
     }
+    delete_event(eventsObj, myEventsObj, maxDate);
     return addEventNumber;
+
+    function delete_event(eventsObj, myEventsObj, maxDate) {
+      let flg = true;
+      for (let i = 0; i < myEventsObj.length; i++) {
+        for (let j = 0; j < eventsObj.length; j++) {
+          if (myEventsObj[i].getEndTime() < new Date() || myEventsObj[i].getTitle().includes(eventsObj[j].id) || myEventsObj[i].getEndTime() > maxDate) {
+            flg = false;
+          }
+        }
+        if (flg) {
+          myEventsObj[i].deleteEvent();
+        }
+        flg = true;
+      }
+    }
 
     function create_event(eventObj, myCalendarObj) {
       let title = eventObj.subjectTitle + `[${eventObj.id}]`;
@@ -89,6 +109,11 @@ function calendar(eventsObj) {
 
       // イベントの説明
       let options = {description: eventObj.content};
+
+      // 追加スキップ
+      if (eventObj.component == 'mod_attendance' && startTime == endTime) {
+        return 0;
+      }
 
       // イベントを追加
       let newEvent = myCalendarObj.createEvent(title, startTime, endTime, options);
