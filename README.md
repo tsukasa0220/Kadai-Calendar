@@ -7,9 +7,12 @@ GASを使ってGoogleカレンダーにMoodleの課題提出や出席登録の�
 ※大学連帯には対応していません
 
 ## サイト
-https://kadai-calendar.com
+https://www.kadai-calendar.com
 
 ## バージョン
+
+**※最新版は[こちら](https://script.google.com/d/1xoDHASlkpfHR4Bw8gyE5zp2z5hAZ6TBwNIc2VUjogYY52L6mpgoXe-q9/edit?usp=sharing)から確認できます**
+
 0.9.0：MoodleCalendarからKadai-Calendarに名称変更、Webアプリケーション化
 
 0.9.4：課題の日時が教授によって変更された場合に予定が変更されない問題を修正
